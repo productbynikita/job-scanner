@@ -20,12 +20,16 @@ function formatJobRow(job: Job, idx: number): string {
   return `| ${idx} | \`${shortId}\` | ${job.score}${risk} | ${job.title} | ${job.company} | ${job.country} | ${job.postedDate ?? '?'} | ${job.status} | ${url} |`;
 }
 
-export function showTop(n = 10, includeAgency = false): string {
+export function showTop(n = 10, includeAgency = false, minDomain = 0): string {
   const jobs = includeAgency
     ? [...getAllJobs(false), ...getAgencyJobs()].sort((a, b) => b.score - a.score)
     : getAllJobs(false);
 
-  const top = jobs.slice(0, n);
+  const filtered = minDomain > 0
+    ? jobs.filter((j) => (j.scoreBreakdown.domainFit ?? 0) >= minDomain)
+    : jobs;
+
+  const top = filtered.slice(0, n);
   if (top.length === 0) return 'No jobs in DB yet. Run `npm run scan` first.';
 
   const lines = [

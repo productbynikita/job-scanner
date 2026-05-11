@@ -104,9 +104,10 @@ show
   .command('top [n]')
   .description('Show top N jobs by score')
   .option('--include-agency', 'include agency jobs')
-  .action((n: string | undefined, opts: { includeAgency?: boolean }) => {
+  .option('--min-domain <n>', 'minimum domain fit score (0-25). Filters out non-tech roles', (v) => parseInt(v, 10))
+  .action((n: string | undefined, opts: { includeAgency?: boolean; minDomain?: number }) => {
     const num = n ? parseInt(n, 10) : 10;
-    console.log(showTop(num, opts.includeAgency ?? false));
+    console.log(showTop(num, opts.includeAgency ?? false, opts.minDomain ?? 0));
   });
 
 show

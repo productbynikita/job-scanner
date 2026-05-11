@@ -58,7 +58,7 @@
       "FHIR",
       "HL7",
       "EHR integration",
-      "HIS",
+      "hospital information system",
       "healthcare interoperability",
       "clinical data",
       "health data exchange"
@@ -73,13 +73,37 @@
     ],
     "general_tech": [
       "SaaS",
+      "B2B SaaS",
+      "enterprise SaaS",
+      "SaaS platform",
+      "SaaS product",
       "cloud-native",
       "microservices",
       "AWS",
       "CI/CD",
       "platform engineering",
-      "B2B SaaS",
-      "enterprise SaaS"
+      "digital product",
+      "digital platform",
+      "AI-powered",
+      "machine learning",
+      "ML platform",
+      "automation platform",
+      "workflow automation",
+      "API",
+      "ERP",
+      "e-commerce",
+      "marketplace",
+      "payments platform",
+      "fintech",
+      "data platform",
+      "analytics platform",
+      "product analytics",
+      "B2B platform",
+      "enterprise software",
+      "supply chain software",
+      "logistics software",
+      "IoT platform",
+      "mobile platform"
     ]
   },
   "industries": {
@@ -93,7 +117,7 @@
     "language": 15,
     "location": 15,
     "seniority": 10,
-    "recency": 5,
+    "recency": 15,
     "bonus_signals": 10
   },
   "scoring_rules": {
@@ -130,10 +154,10 @@
       "junior_or_executive": 0
     },
     "recency": {
-      "under_24_hours": 5,
-      "1_to_3_days": 4,
-      "4_to_7_days": 3,
-      "8_to_14_days": 2,
+      "under_24_hours": 15,
+      "1_to_3_days": 12,
+      "4_to_7_days": 8,
+      "8_to_14_days": 3,
       "15_to_30_days": 1,
       "over_30_days": 0
     },
