@@ -18,6 +18,7 @@ import { nlVacaturebankCollector } from './nlVacaturebank.js';
 import { welcomeToJungleCollector } from './welcomeToJungle.js';
 import { euresCollector } from './eures.js';
 import { linkedinCollector } from './linkedin.js';
+import { agenciesCollector } from './agency.js';
 
 export const ALL_COLLECTORS: Collector[] = [
   // Tier 1 — remote-friendly aggregators
@@ -38,6 +39,8 @@ export const ALL_COLLECTORS: Collector[] = [
   euresCollector,
   // Tier 4 — LinkedIn via Apify (Phase 4)
   linkedinCollector,
+  // Tier 5 — Recruiting agencies (Phase 5)
+  agenciesCollector,
 ];
 
 export type ScanMode =
@@ -79,14 +82,14 @@ const MODE_TO_COLLECTORS: Record<ScanMode, string[]> = {
   // LinkedIn-only mode (Phase 4): only run the LinkedIn collector
   linkedin: LINKEDIN_SOURCES,
 
-  // Full scan: ATS + country + remote + LinkedIn (Phase 4 default)
-  full: [...ATS_SOURCES, ...COUNTRY_SOURCES, ...REMOTE_SOURCES, ...LINKEDIN_SOURCES],
+  // Full scan: ATS + country + remote + LinkedIn + agencies
+  full: [...ATS_SOURCES, ...COUNTRY_SOURCES, ...REMOTE_SOURCES, ...LINKEDIN_SOURCES, 'agencies'],
 
-  // Deep scan: everything once Phase 5+ collectors land. For now, same as full.
-  deep: [...ATS_SOURCES, ...COUNTRY_SOURCES, ...REMOTE_SOURCES, ...LINKEDIN_SOURCES],
+  // Deep scan: everything
+  deep: [...ATS_SOURCES, ...COUNTRY_SOURCES, ...REMOTE_SOURCES, ...LINKEDIN_SOURCES, 'agencies'],
 
-  // Phase 5+ stubs:
-  agencies: [],
+  // Phase 5 — Recruiting agencies
+  agencies: ['agencies'],
   glassdoor: [], // intentionally never wired — user opted out
 };
 

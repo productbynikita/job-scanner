@@ -144,6 +144,34 @@ program
   .description('Analytics: which sources surface the highest-scored jobs')
   .action(() => console.log(whereBest()));
 
+// ------------------------------------------------------------------ agencies
+const agencies = program.command('agencies').description('Manage recruiting agency sources');
+
+agencies
+  .command('list')
+  .description('List all configured agencies and their registration status')
+  .action(async () => {
+    const { listAgencies } = await import('./agencyCli.js');
+    console.log(listAgencies());
+  });
+
+agencies
+  .command('register <id>')
+  .description('Mark an agency as registered (updates agencies.json)')
+  .option('--contact <name>', 'recruiter contact name')
+  .action(async (id: string, opts: { contact?: string }) => {
+    const { registerAgency } = await import('./agencyCli.js');
+    console.log(registerAgency(id, opts.contact));
+  });
+
+agencies
+  .command('unregister <id>')
+  .description('Mark an agency as not registered')
+  .action(async (id: string) => {
+    const { unregisterAgency } = await import('./agencyCli.js');
+    console.log(unregisterAgency(id));
+  });
+
 // ------------------------------------------------------------------ enrich
 program
   .command('enrich <jobId>')
@@ -152,6 +180,37 @@ program
   .action(async (jobId: string, opts: { yes?: boolean }) => {
     const { runEnrich } = await import('./enrich.js');
     await runEnrich({ jobId, skipConfirm: opts.yes });
+  });
+
+// ------------------------------------------------------------------ AI commands (Phase 6)
+program
+  .command('assess <jobId>')
+  .description('Deep fit analysis of a job against your CV (~$0.11/call)')
+  .option('-y, --yes', 'skip cost confirmation')
+  .option('--model <name>', 'Claude model override', 'claude-opus-4-5')
+  .action(async (jobId: string, opts: { yes?: boolean; model?: string }) => {
+    const { runAiCommand } = await import('./ai.js');
+    await runAiCommand({ command: 'assess', jobId, skipConfirm: opts.yes, model: opts.model });
+  });
+
+program
+  .command('tailor-cv <jobId>')
+  .description('Tailored CV bullet points for a specific role (~$0.21/call)')
+  .option('-y, --yes', 'skip cost confirmation')
+  .option('--model <name>', 'Claude model override', 'claude-opus-4-5')
+  .action(async (jobId: string, opts: { yes?: boolean; model?: string }) => {
+    const { runAiCommand } = await import('./ai.js');
+    await runAiCommand({ command: 'tailor-cv', jobId, skipConfirm: opts.yes, model: opts.model });
+  });
+
+program
+  .command('cover <jobId>')
+  .description('Cover letter draft for a specific role (~$0.09/call)')
+  .option('-y, --yes', 'skip cost confirmation')
+  .option('--model <name>', 'Claude model override', 'claude-opus-4-5')
+  .action(async (jobId: string, opts: { yes?: boolean; model?: string }) => {
+    const { runAiCommand } = await import('./ai.js');
+    await runAiCommand({ command: 'cover', jobId, skipConfirm: opts.yes, model: opts.model });
   });
 
 program.parseAsync(process.argv).catch((err) => {

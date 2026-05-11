@@ -12,6 +12,9 @@
     "scan:country": "tsx src/cli/index.ts scan --mode country",
     "scan:remote": "tsx src/cli/index.ts scan --mode remote",
     "scan:linkedin": "tsx src/cli/index.ts scan --mode linkedin",
+    "scan:agencies": "tsx src/cli/index.ts scan --mode agencies",
+    "agencies:list": "tsx src/cli/index.ts agencies list",
+    "agencies:register": "tsx src/cli/index.ts agencies register",
     "scan:debug": "tsx src/cli/index.ts scan --mode full --verbose",
     "enrich": "tsx src/cli/index.ts enrich",
     "show:top": "tsx src/cli/index.ts show top",
@@ -22,6 +25,9 @@
     "compare": "tsx src/cli/index.ts compare",
     "where:best": "tsx src/cli/index.ts where-best",
     "replay": "tsx src/cli/replay-datasets.ts",
+    "assess": "tsx src/cli/index.ts assess",
+    "tailor-cv": "tsx src/cli/index.ts tailor-cv",
+    "cover": "tsx src/cli/index.ts cover",
     "init:db": "tsx src/storage/init.ts",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -32,6 +38,7 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.95.2",
     "apify-client": "^2.12.0",
     "better-sqlite3": "^11.10.0",
     "cheerio": "^1.0.0",
