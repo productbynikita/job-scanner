@@ -1,0 +1,54 @@
+{
+  "_comment": "EU tech companies grouped by ATS platform. Each entry includes the company's slug on that platform. Add/remove companies freely — the scanner will pick up changes on next scan. Slugs are usually visible in the company's careers page URL.",
+  "_howToFindSlugs": {
+    "greenhouse": "Visit https://boards.greenhouse.io/{slug} or check the company's careers page — most use boards.greenhouse.io/<slug> or job-boards.greenhouse.io/<slug>",
+    "lever": "Visit https://jobs.lever.co/{slug} — slug is in the URL",
+    "ashby": "Visit https://jobs.ashbyhq.com/{slug} — slug is in the URL",
+    "workable": "Visit https://apply.workable.com/{slug}/ — slug is in the URL"
+  },
+  "greenhouse": [
+    { "slug": "mollie", "name": "Mollie", "country": "NL", "industry": "fintech" },
+    { "slug": "adyen", "name": "Adyen", "country": "NL", "industry": "fintech" },
+    { "slug": "miro", "name": "Miro", "country": "NL", "industry": "saas" },
+    { "slug": "personio", "name": "Personio", "country": "DE", "industry": "hrtech" },
+    { "slug": "celonis", "name": "Celonis", "country": "DE", "industry": "enterprise-saas" },
+    { "slug": "n26", "name": "N26", "country": "DE", "industry": "fintech" },
+    { "slug": "trade-republic", "name": "Trade Republic", "country": "DE", "industry": "fintech" },
+    { "slug": "delivery-hero", "name": "Delivery Hero", "country": "DE", "industry": "logistics" },
+    { "slug": "hellofresh", "name": "HelloFresh", "country": "DE", "industry": "consumer" },
+    { "slug": "zalando", "name": "Zalando", "country": "DE", "industry": "ecommerce" },
+    { "slug": "scout24", "name": "Scout24", "country": "DE", "industry": "marketplace" },
+    { "slug": "datadog", "name": "Datadog", "country": "remote", "industry": "devtools" },
+    { "slug": "elastic", "name": "Elastic", "country": "remote", "industry": "devtools" },
+    { "slug": "github", "name": "GitHub", "country": "remote", "industry": "devtools" },
+    { "slug": "stripe", "name": "Stripe", "country": "remote", "industry": "fintech" },
+    { "slug": "klarna", "name": "Klarna", "country": "SE", "industry": "fintech" },
+    { "slug": "spotify", "name": "Spotify", "country": "SE", "industry": "media" },
+    { "slug": "wise", "name": "Wise", "country": "remote", "industry": "fintech" }
+  ],
+  "lever": [
+    { "slug": "messagebird", "name": "MessageBird", "country": "NL", "industry": "saas" },
+    { "slug": "bunq", "name": "bunq", "country": "NL", "industry": "fintech" },
+    { "slug": "remote", "name": "Remote", "country": "remote", "industry": "hrtech" },
+    { "slug": "deel", "name": "Deel", "country": "remote", "industry": "hrtech" },
+    { "slug": "doctolib", "name": "Doctolib", "country": "FR", "industry": "healthtech" },
+    { "slug": "back-market", "name": "Back Market", "country": "FR", "industry": "ecommerce" },
+    { "slug": "alan", "name": "Alan", "country": "FR", "industry": "healthtech" },
+    { "slug": "cybereason", "name": "Cybereason", "country": "remote", "industry": "security" }
+  ],
+  "ashby": [
+    { "slug": "linear", "name": "Linear", "country": "remote", "industry": "devtools" },
+    { "slug": "ramp", "name": "Ramp", "country": "remote", "industry": "fintech" },
+    { "slug": "vercel", "name": "Vercel", "country": "remote", "industry": "devtools" },
+    { "slug": "anthropic", "name": "Anthropic", "country": "remote", "industry": "ai" },
+    { "slug": "openai", "name": "OpenAI", "country": "remote", "industry": "ai" },
+    { "slug": "cohere", "name": "Cohere", "country": "remote", "industry": "ai" },
+    { "slug": "supabase", "name": "Supabase", "country": "remote", "industry": "devtools" },
+    { "slug": "browserbase", "name": "Browserbase", "country": "remote", "industry": "devtools" }
+  ],
+  "workable": [
+    { "slug": "blueground", "name": "Blueground", "country": "GR", "industry": "real-estate" },
+    { "slug": "workable", "name": "Workable", "country": "GR", "industry": "hrtech" },
+    { "slug": "skroutz", "name": "Skroutz", "country": "GR", "industry": "marketplace" }
+  ]
+}

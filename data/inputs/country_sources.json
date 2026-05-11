@@ -1,0 +1,71 @@
+{
+  "_comment": "Search URL templates for country-leader job boards. Each entry generates one HTTP request per scan. {role} placeholder is substituted with each target role's slug at runtime. Add/remove entries freely.",
+  "stepstone_de": {
+    "name": "StepStone Germany",
+    "country": "DE",
+    "parser": "jsonld",
+    "rateLimitMs": 1500,
+    "urls": [
+      "https://www.stepstone.de/jobs/senior-product-manager?action=facet_selected%3Bage%3Bage_7&fu=2000017",
+      "https://www.stepstone.de/jobs/technical-product-manager?action=facet_selected%3Bage%3Bage_7",
+      "https://www.stepstone.de/jobs/product-owner?action=facet_selected%3Bage%3Bage_7"
+    ]
+  },
+  "stepstone_be": {
+    "name": "StepStone Belgium",
+    "country": "BE",
+    "parser": "jsonld",
+    "rateLimitMs": 1500,
+    "urls": [
+      "https://www.stepstone.be/en/jobs/senior-product-manager",
+      "https://www.stepstone.be/en/jobs/technical-product-manager",
+      "https://www.stepstone.be/en/jobs/product-owner"
+    ]
+  },
+  "jobs_ch": {
+    "name": "jobs.ch",
+    "country": "CH",
+    "parser": "jsonld",
+    "rateLimitMs": 1500,
+    "urls": [
+      "https://www.jobs.ch/en/vacancies/?term=senior+product+manager&publication-date=7",
+      "https://www.jobs.ch/en/vacancies/?term=technical+product+manager&publication-date=7",
+      "https://www.jobs.ch/en/vacancies/?term=product+owner&publication-date=7"
+    ]
+  },
+  "nl_vacaturebank": {
+    "name": "NationaleVacaturebank",
+    "country": "NL",
+    "parser": "jsonld",
+    "rateLimitMs": 1500,
+    "urls": [
+      "https://www.nationalevacaturebank.nl/vacature/zoeken?keywords=senior+product+manager",
+      "https://www.nationalevacaturebank.nl/vacature/zoeken?keywords=technical+product+manager",
+      "https://www.nationalevacaturebank.nl/vacature/zoeken?keywords=product+owner"
+    ]
+  },
+  "welcome_to_jungle": {
+    "name": "Welcome to the Jungle",
+    "country": "multi",
+    "parser": "nextdata",
+    "rateLimitMs": 1500,
+    "urls": [
+      "https://www.welcometothejungle.com/en/jobs?query=senior%20product%20manager&refinementList%5Boffices.country_code%5D%5B0%5D=DE",
+      "https://www.welcometothejungle.com/en/jobs?query=senior%20product%20manager&refinementList%5Boffices.country_code%5D%5B0%5D=NL",
+      "https://www.welcometothejungle.com/en/jobs?query=senior%20product%20manager&refinementList%5Boffices.country_code%5D%5B0%5D=BE",
+      "https://www.welcometothejungle.com/en/jobs?query=technical%20product%20manager",
+      "https://www.welcometothejungle.com/en/jobs?query=product%20owner"
+    ]
+  },
+  "eures": {
+    "name": "EURES (EU official)",
+    "country": "multi",
+    "parser": "jsonld",
+    "rateLimitMs": 1000,
+    "urls": [
+      "https://eures.europa.eu/eures-apps/searchengine/page/jv-search/search?lang=en&keywords=senior+product+manager&locationCodes=DE,NL,BE",
+      "https://eures.europa.eu/eures-apps/searchengine/page/jv-search/search?lang=en&keywords=technical+product+manager&locationCodes=DE,NL,BE",
+      "https://eures.europa.eu/eures-apps/searchengine/page/jv-search/search?lang=en&keywords=product+owner&locationCodes=DE,NL,BE"
+    ]
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "geographies": {
+    "primary": [
+      {"country": "DE", "name": "Germany", "cities": ["Berlin", "Munich", "Hamburg", "Frankfurt", "Stuttgart", "Cologne", "Dusseldorf"]},
+      {"country": "NL", "name": "Netherlands", "cities": ["Amsterdam", "Rotterdam", "Utrecht", "The Hague", "Eindhoven"]},
+      {"country": "CH", "name": "Switzerland", "cities": ["Zurich", "Geneva", "Basel", "Bern", "Lausanne", "Zug"]},
+      {"country": "BE", "name": "Belgium", "cities": ["Brussels", "Antwerp", "Ghent", "Leuven"]}
+    ],
+    "remote": {
+      "enabled": true,
+      "definition": "Remote roles based in EU companies, compatible with residence in Germany",
+      "exclude_us_only": true
+    }
+  },
+  "language": {
+    "required": "english",
+    "exception_tag": "Language Risk — Perfect Domain Fit",
+    "exception_threshold_score": 75,
+    "note": "If a role requires DE/NL/FR but is a near-perfect domain match (API, FHIR, SAP BTP, healthcare interoperability), tag instead of discard."
+  },
+  "work_authorization": {
+    "status": "EU Blue Card holder",
+    "portable_within_eu_after_months": 18,
+    "switzerland_requires_separate_permit": true,
+    "highlight_visa_sponsorship": true
+  },
+  "exclusions": {
+    "companies": [],
+    "industries": ["defense", "gambling", "tobacco"],
+    "min_company_size": null,
+    "max_company_size": null
+  },
+  "salary": {
+    "currency_preferences": ["EUR", "CHF"],
+    "minimum_annual_eur": null,
+    "show_salary_when_available": true
+  },
+  "freshness": {
+    "max_age_days": 30,
+    "preferred_age_days": 7,
+    "urgency_thresholds_days": {
+      "apply_now": 1,
+      "fresh": 3,
+      "open": 7,
+      "aging": 14,
+      "stale": 30
+    }
+  },
+  "scan_behavior": {
+    "default_mode": "full",
+    "modes": {
+      "quick": {"description": "Indeed MCP + RemoteOK only", "estimated_seconds": 30},
+      "full": {"description": "All tier 1-4 sources", "estimated_seconds": 300},
+      "deep": {"description": "All sources including agencies", "estimated_seconds": 600}
+    },
+    "max_results_per_source": 25,
+    "skip_if_no_results_count": 3
+  }
+}

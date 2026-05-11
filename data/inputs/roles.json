@@ -1,0 +1,148 @@
+{
+  "target_titles": {
+    "exact_match": [
+      "Senior Product Manager",
+      "Sr. Product Manager",
+      "Senior Technical Product Manager",
+      "Technical Product Manager",
+      "Product Owner",
+      "Senior Product Owner",
+      "Technical Product Owner"
+    ],
+    "strong_match": [
+      "Lead Product Manager",
+      "Staff Product Manager",
+      "Principal Product Manager",
+      "Product Manager Platform",
+      "Product Manager API",
+      "Senior Product Manager Platform"
+    ],
+    "weak_match": [
+      "Product Manager",
+      "Senior Program Manager",
+      "Technical Program Manager",
+      "Group Product Manager"
+    ],
+    "exclude": [
+      "Junior Product Manager",
+      "Associate Product Manager",
+      "Director of Product",
+      "VP Product",
+      "Vice President Product",
+      "Chief Product Officer",
+      "CPO",
+      "Product Marketing Manager",
+      "Product Marketing",
+      "Product Designer",
+      "UX Product"
+    ]
+  },
+  "seniority_signal": {
+    "senior_keywords": ["senior", "sr.", "sr ", "lead", "staff", "principal"],
+    "junior_keywords": ["junior", "jr.", "jr ", "associate", "graduate", "intern", "trainee", "entry"],
+    "executive_keywords": ["director", "vp", "vice president", "chief", "head of"]
+  },
+  "domain_strengths": {
+    "primary": [
+      "API platform",
+      "API management",
+      "API gateway",
+      "developer experience",
+      "developer platform",
+      "REST API",
+      "event-driven",
+      "integration platform",
+      "iPaaS"
+    ],
+    "secondary": [
+      "FHIR",
+      "HL7",
+      "EHR integration",
+      "HIS",
+      "healthcare interoperability",
+      "clinical data",
+      "health data exchange"
+    ],
+    "tertiary": [
+      "SAP BTP",
+      "SAP CPI",
+      "SAP API Management",
+      "S/4HANA",
+      "YaaS",
+      "Health Data Services"
+    ],
+    "general_tech": [
+      "SaaS",
+      "cloud-native",
+      "microservices",
+      "AWS",
+      "CI/CD",
+      "platform engineering",
+      "B2B SaaS",
+      "enterprise SaaS"
+    ]
+  },
+  "industries": {
+    "preferred": ["healthtech", "fintech", "enterprise SaaS", "developer tools", "B2B platform"],
+    "neutral": ["e-commerce", "logistics", "edtech", "media", "telecom"],
+    "avoid": ["defense", "gambling", "tobacco", "MLM", "crypto-only"]
+  },
+  "scoring_weights": {
+    "role_title_match": 20,
+    "domain_fit": 25,
+    "language": 15,
+    "location": 15,
+    "seniority": 10,
+    "recency": 5,
+    "bonus_signals": 10
+  },
+  "scoring_rules": {
+    "role_title_match": {
+      "exact_match": 20,
+      "strong_match": 14,
+      "weak_match": 8,
+      "no_match": 0
+    },
+    "domain_fit": {
+      "primary_keyword_hit": 25,
+      "secondary_keyword_hit": 20,
+      "tertiary_keyword_hit": 15,
+      "general_tech_hit": 10,
+      "no_tech_signal": 0
+    },
+    "language": {
+      "english_primary": 15,
+      "english_acceptable": 12,
+      "german_b1_acceptable": 10,
+      "language_risk_perfect_fit": 7,
+      "non_english_required": 0
+    },
+    "location": {
+      "target_country": 15,
+      "remote_eu": 13,
+      "other_eu": 7,
+      "non_eu": 0
+    },
+    "seniority": {
+      "senior_ic": 10,
+      "lead_principal_ic": 9,
+      "mid_level": 5,
+      "junior_or_executive": 0
+    },
+    "recency": {
+      "under_24_hours": 5,
+      "1_to_3_days": 4,
+      "4_to_7_days": 3,
+      "8_to_14_days": 2,
+      "15_to_30_days": 1,
+      "over_30_days": 0
+    },
+    "bonus_signals": {
+      "visa_sponsorship": 3,
+      "fhir_or_hl7": 3,
+      "sap_btp": 3,
+      "remote_or_hybrid": 1,
+      "healthtech_or_fintech": 2
+    }
+  }
+}

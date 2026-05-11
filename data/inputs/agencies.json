@@ -1,0 +1,178 @@
+{
+  "agencies": [
+    {
+      "id": "robert_walters",
+      "name": "Robert Walters",
+      "tier": "pan_eu",
+      "specialty": "Tech, IT, Product Management",
+      "search_urls": {
+        "DE": "https://www.robertwalters.de/en/jobs.html?keywords=product+manager",
+        "NL": "https://www.robertwalters.nl/en/jobs.html?keywords=product+manager",
+        "CH": "https://www.robertwalters.ch/en/jobs.html?keywords=product+manager",
+        "BE": "https://www.robertwalters.be/en/jobs.html?keywords=product+manager"
+      },
+      "registered": false,
+      "registration_url": "https://www.robertwalters.com/en/register-with-us.html",
+      "contact": null,
+      "notes": "Strong tech/IT recruitment across all 4 target countries"
+    },
+    {
+      "id": "michael_page",
+      "name": "Michael Page",
+      "tier": "pan_eu",
+      "specialty": "Senior PM, Executive Search",
+      "search_urls": {
+        "DE": "https://www.michaelpage.de/en/jobs?keywords=product+manager",
+        "NL": "https://www.michaelpage.nl/en/jobs?keywords=product+manager",
+        "CH": "https://www.michaelpage.ch/en/jobs?keywords=product+manager",
+        "BE": "https://www.michaelpage.be/en/jobs?keywords=product+manager"
+      },
+      "registered": false,
+      "registration_url": "https://www.michaelpage.com/register",
+      "contact": null,
+      "notes": "Senior product roles across all 4 countries"
+    },
+    {
+      "id": "hays",
+      "name": "Hays",
+      "tier": "pan_eu",
+      "specialty": "IT and Product Management",
+      "search_urls": {
+        "DE": "https://www.hays.de/en/jobsearch?searchterm=product+manager",
+        "NL": "https://www.hays.nl/en/jobs?keywords=product+manager",
+        "CH": "https://www.hays.ch/en/jobs?keywords=product+manager",
+        "BE": "https://www.hays.be/en/jobs?keywords=product+manager"
+      },
+      "registered": false,
+      "registration_url": "https://www.hays.com/register",
+      "contact": null,
+      "notes": "Large IT recruitment network across DACH and Benelux"
+    },
+    {
+      "id": "computer_futures_de",
+      "name": "Computer Futures Germany",
+      "tier": "country",
+      "country": "DE",
+      "specialty": "IT and product management",
+      "search_urls": {
+        "DE": "https://www.computerfutures.com/de-de/job-search/?q=product+manager"
+      },
+      "registered": false,
+      "registration_url": "https://www.computerfutures.com/de-de/register",
+      "contact": null,
+      "notes": "IT specialist recruiter in Germany"
+    },
+    {
+      "id": "robert_half_de",
+      "name": "Robert Half Germany",
+      "tier": "country",
+      "country": "DE",
+      "specialty": "Tech and product management",
+      "search_urls": {
+        "DE": "https://www.roberthalf.de/en/jobs?keywords=product+manager"
+      },
+      "registered": false,
+      "registration_url": "https://www.roberthalf.de/en/register",
+      "contact": null,
+      "notes": "Tech-focused recruiter in DACH region"
+    },
+    {
+      "id": "orange_quarter",
+      "name": "Orange Quarter",
+      "tier": "country",
+      "country": "NL",
+      "specialty": "Product, Engineering, Design - scaleups",
+      "search_urls": {
+        "NL": "https://orange-quarter.com/jobs/?search=product+manager"
+      },
+      "registered": false,
+      "registration_url": "https://orange-quarter.com/contact/",
+      "contact": null,
+      "notes": "Top NL recruiter for PM roles at scaleups, also has Berlin office"
+    },
+    {
+      "id": "bluebird",
+      "name": "Bluebird Recruitment",
+      "tier": "country",
+      "country": "NL",
+      "specialty": "SaaS Product, Engineering",
+      "search_urls": {
+        "NL": "https://bluebirdrecruitment.com/jobs/?keyword=product+manager"
+      },
+      "registered": false,
+      "registration_url": "https://bluebirdrecruitment.com/contact/",
+      "contact": null,
+      "notes": "SaaS-focused, consultants are ex-PMs, deeper screening"
+    },
+    {
+      "id": "search_x",
+      "name": "Search X Recruitment",
+      "tier": "country",
+      "country": "NL",
+      "specialty": "IT and product NL",
+      "search_urls": {
+        "NL": "https://searchx-recruitment.com/jobs/?search=product+manager"
+      },
+      "registered": false,
+      "registration_url": "https://searchx-recruitment.com/contact/",
+      "contact": null,
+      "notes": "Amsterdam-based, IT and AI roles"
+    },
+    {
+      "id": "swisslinx",
+      "name": "Swisslinx",
+      "tier": "country",
+      "country": "CH",
+      "specialty": "Tech, Finance, Pharma",
+      "search_urls": {
+        "CH": "https://www.swisslinx.com/en/jobs?keywords=product+manager"
+      },
+      "registered": false,
+      "registration_url": "https://www.swisslinx.com/en/contact",
+      "contact": null,
+      "notes": "Top Swiss recruiter, 25+ years experience"
+    },
+    {
+      "id": "darwin_recruitment_ch",
+      "name": "Darwin Recruitment Switzerland",
+      "tier": "country",
+      "country": "CH",
+      "specialty": "Tech and Product CH+global",
+      "search_urls": {
+        "CH": "https://www.darwinrecruitment.ch/jobs?keywords=product+manager"
+      },
+      "registered": false,
+      "registration_url": "https://www.darwinrecruitment.ch/contact",
+      "contact": null,
+      "notes": "Tech-focused, also covers renewable energy, life sciences"
+    },
+    {
+      "id": "gentis_be",
+      "name": "Gentis Group",
+      "tier": "country",
+      "country": "BE",
+      "specialty": "IT and Product Belgium",
+      "search_urls": {
+        "BE": "https://www.gentis.com/en/jobs?keywords=product+manager"
+      },
+      "registered": false,
+      "registration_url": "https://www.gentis.com/en/contact",
+      "contact": null,
+      "notes": "Brussels-based, ~230 employees, comprehensive IT recruitment"
+    },
+    {
+      "id": "vivid_resourcing_be",
+      "name": "Vivid Resourcing Belgium",
+      "tier": "country",
+      "country": "BE",
+      "specialty": "Niche tech recruitment",
+      "search_urls": {
+        "BE": "https://www.vividresourcing.com/jobs?keywords=product+manager"
+      },
+      "registered": false,
+      "registration_url": "https://www.vividresourcing.com/contact",
+      "contact": null,
+      "notes": "Specialised tech roles in Belgium"
+    }
+  ]
+}

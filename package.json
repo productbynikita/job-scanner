@@ -1,0 +1,54 @@
+{
+  "name": "job-scanner",
+  "version": "0.1.0",
+  "description": "Standalone job board scanner for PM/TPM/PO roles in DE/NL/CH/BE/remote-EU",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "scan": "tsx src/cli/index.ts scan",
+    "scan:quick": "tsx src/cli/index.ts scan --mode quick",
+    "scan:full": "tsx src/cli/index.ts scan --mode full",
+    "scan:ats": "tsx src/cli/index.ts scan --mode ats",
+    "scan:country": "tsx src/cli/index.ts scan --mode country",
+    "scan:remote": "tsx src/cli/index.ts scan --mode remote",
+    "scan:linkedin": "tsx src/cli/index.ts scan --mode linkedin",
+    "scan:debug": "tsx src/cli/index.ts scan --mode full --verbose",
+    "enrich": "tsx src/cli/index.ts enrich",
+    "show:top": "tsx src/cli/index.ts show top",
+    "show:new": "tsx src/cli/index.ts show new",
+    "show:stats": "tsx src/cli/index.ts show stats",
+    "show:summary": "tsx src/cli/index.ts show summary",
+    "show:job": "tsx src/cli/index.ts show job",
+    "compare": "tsx src/cli/index.ts compare",
+    "where:best": "tsx src/cli/index.ts where-best",
+    "replay": "tsx src/cli/replay-datasets.ts",
+    "init:db": "tsx src/storage/init.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src tests --ext .ts",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\""
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "apify-client": "^2.12.0",
+    "better-sqlite3": "^11.10.0",
+    "cheerio": "^1.0.0",
+    "commander": "^12.1.0",
+    "dotenv": "^16.4.5",
+    "fast-xml-parser": "^4.5.0",
+    "kleur": "^4.1.5"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.11",
+    "@types/node": "^22.9.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
+    "prettier": "^3.3.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}

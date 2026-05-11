@@ -1,0 +1,13 @@
+node_modules/
+dist/
+data/jobs.db
+data/jobs.db-journal
+data/jobs.db-wal
+data/jobs.db-shm
+*.log
+.env
+.env.local
+.DS_Store
+.vscode/
+.idea/
+coverage/
