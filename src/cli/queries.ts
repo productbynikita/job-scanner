@@ -13,11 +13,23 @@ import {
 } from '../storage/db.js';
 import type { Job } from '../types/job.js';
 
+/**
+ * OSC 8 terminal hyperlink — works in iTerm2, modern terminals, VS Code terminal.
+ * Falls back to plain text in environments that don't support it.
+ */
+function osc8Link(text: string, url: string): string {
+  if (!url || url === '-') return text;
+  return `]8;;${url}\\${text}]8;;\\`;
+}
+
 function formatJobRow(job: Job, idx: number): string {
   const risk = job.languageRisk ? ' ⚠' : '';
-  const url = job.url || '-';
+  const url = job.url || '';
   const shortId = job.id.substring(0, 8);
-  return `| ${idx} | \`${shortId}\` | ${job.score}${risk} | ${job.title} | ${job.company} | ${job.country} | ${job.postedDate ?? '?'} | ${job.status} | ${url} |`;
+  // Title becomes a clickable hyperlink in supported terminals
+  const titleCell = url ? osc8Link(job.title, url) : job.title;
+  const urlCell = url ? osc8Link('→ open', url) : '-';
+  return `| ${idx} | \`${shortId}\` | ${job.score}${risk} | ${titleCell} | ${job.company} | ${job.country} | ${job.postedDate ?? '?'} | ${job.status} | ${urlCell} |`;
 }
 
 export function showTop(n = 10, includeAgency = false, minDomain = 0): string {

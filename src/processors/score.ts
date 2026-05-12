@@ -16,7 +16,13 @@ export interface ScoreResult {
 function containsAny(text: string, keywords: string[]): boolean {
   if (!text) return false;
   const lower = text.toLowerCase();
-  return keywords.some((kw) => lower.includes(kw.toLowerCase()));
+  return keywords.some((kw) => {
+    // Keywords prefixed with "re:" are treated as regex patterns (case-insensitive)
+    if (kw.startsWith('re:')) {
+      return new RegExp(kw.slice(3), 'i').test(text);
+    }
+    return lower.includes(kw.toLowerCase());
+  });
 }
 
 function scoreRoleTitle(title: string, roles: Roles): { points: number; reason: string } {

@@ -38,9 +38,31 @@
     ]
   },
   "seniority_signal": {
-    "senior_keywords": ["senior", "sr.", "sr ", "lead", "staff", "principal"],
-    "junior_keywords": ["junior", "jr.", "jr ", "associate", "graduate", "intern", "trainee", "entry"],
-    "executive_keywords": ["director", "vp", "vice president", "chief", "head of"]
+    "senior_keywords": [
+      "senior",
+      "sr.",
+      "sr ",
+      "lead",
+      "staff",
+      "principal"
+    ],
+    "junior_keywords": [
+      "junior",
+      "jr.",
+      "jr ",
+      "associate",
+      "graduate",
+      "intern",
+      "trainee",
+      "entry"
+    ],
+    "executive_keywords": [
+      "director",
+      "vp",
+      "vice president",
+      "chief",
+      "head of"
+    ]
   },
   "domain_strengths": {
     "primary": [
@@ -56,6 +78,7 @@
     ],
     "secondary": [
       "FHIR",
+      "re:\\bHIS\\b",
       "HL7",
       "EHR integration",
       "hospital information system",
@@ -107,9 +130,27 @@
     ]
   },
   "industries": {
-    "preferred": ["healthtech", "fintech", "enterprise SaaS", "developer tools", "B2B platform"],
-    "neutral": ["e-commerce", "logistics", "edtech", "media", "telecom"],
-    "avoid": ["defense", "gambling", "tobacco", "MLM", "crypto-only"]
+    "preferred": [
+      "healthtech",
+      "fintech",
+      "enterprise SaaS",
+      "developer tools",
+      "B2B platform"
+    ],
+    "neutral": [
+      "e-commerce",
+      "logistics",
+      "edtech",
+      "media",
+      "telecom"
+    ],
+    "avoid": [
+      "defense",
+      "gambling",
+      "tobacco",
+      "MLM",
+      "crypto-only"
+    ]
   },
   "scoring_weights": {
     "role_title_match": 20,

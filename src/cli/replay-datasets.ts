@@ -86,7 +86,13 @@ function pickSalary(item: ApifyItem): string | null {
   return (item.salary_range ?? item.salary ?? null) as string | null;
 }
 
-function parsePostedDate(item: ApifyItem): string | null {
+/**
+ * Parse a posted date from an actor item.
+ * @param referenceDate - The date the actor RAN (not today). Critical for
+ *   correct replay: relative strings like "23 hours ago" must be resolved
+ *   against the run date, not the current date.
+ */
+function parsePostedDate(item: ApifyItem, referenceDate: Date = new Date()): string | null {
   const isoCandidate = ((item.postedAt ?? item.publishedAt ?? '') as string);
   if (isoCandidate) {
     const m = isoCandidate.match(/^\d{4}-\d{2}-\d{2}/);
@@ -96,7 +102,6 @@ function parsePostedDate(item: ApifyItem): string | null {
   }
   const rel = ((item.time_posted ?? item.postedTimeAgo ?? item.postedAt ?? '') as string);
   if (!rel) return null;
-  const today = new Date();
   const lower = rel.toLowerCase();
   let daysAgo: number | null = null;
   let m = lower.match(/(\d+)\s*hour/);
@@ -110,7 +115,7 @@ function parsePostedDate(item: ApifyItem): string | null {
   if (lower.includes('just') || lower.includes('today')) daysAgo = 0;
   if (lower.includes('yesterday')) daysAgo = 1;
   if (daysAgo === null) return null;
-  const d = new Date(today.getTime() - daysAgo * 24 * 60 * 60 * 1000);
+  const d = new Date(referenceDate.getTime() - daysAgo * 24 * 60 * 60 * 1000);
   return d.toISOString().substring(0, 10);
 }
 
@@ -211,6 +216,10 @@ async function replayDatasets(opts: {
       const { items } = await client.dataset(run.defaultDatasetId).listItems({ limit: 200 });
       totalFetched += items.length;
 
+      // Use the run's start date as reference for relative-time strings like
+      // "23 hours ago" — NOT today, which would shift all dates by replay lag.
+      const runDate = new Date(run.startedAt ?? Date.now());
+
       let kept = 0;
       for (const raw of items as ApifyItem[]) {
         const title = pickTitle(raw);
@@ -229,7 +238,7 @@ async function replayDatasets(opts: {
           url,
           descriptionSnippet: cleanText(pickDescription(raw), 500),
           salary: pickSalary(raw),
-          postedDate: parsePostedDate(raw),
+          postedDate: parsePostedDate(raw, runDate),
           source: 'linkedin',
           isAgency: false,
         });
