@@ -110,7 +110,7 @@ export const greenhouseCollector: Collector = {
             country,
             remote: locationName.toLowerCase().includes('remote') ? 'remote' : '',
             url: j.absolute_url,
-            descriptionSnippet: cleanText(j.content ?? '', 500),
+            descriptionSnippet: cleanText(j.content ?? ''),
             salary: null,
             postedDate,
             source: 'greenhouse',

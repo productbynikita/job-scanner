@@ -84,7 +84,7 @@ export const remoteOkCollector: Collector = {
           country: 'remote',
           remote: 'remote',
           url: item.url ?? item.apply_url ?? '',
-          descriptionSnippet: cleanText(item.description, 500),
+          descriptionSnippet: cleanText(item.description),
           salary: item.salary_min ? String(item.salary_min) : null,
           postedDate,
           source: 'remoteok',

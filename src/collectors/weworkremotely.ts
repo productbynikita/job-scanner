@@ -99,7 +99,7 @@ export const weWorkRemotelyCollector: Collector = {
           country: 'remote',
           remote: 'remote',
           url: String(item.link ?? '').trim(),
-          descriptionSnippet: cleanText(String(item.description ?? ''), 500),
+          descriptionSnippet: cleanText(String(item.description ?? '')),
           salary: null,
           postedDate,
           source: 'weworkremotely',

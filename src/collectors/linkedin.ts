@@ -218,7 +218,7 @@ export const linkedinCollector: Collector = {
                 country,
                 remote,
                 url,
-                descriptionSnippet: cleanText(item.job_description ?? item.descriptionText ?? item.description ?? '', 500),
+                descriptionSnippet: cleanText(item.job_description ?? item.descriptionText ?? item.description ?? ''),
                 salary: item.salary_range ?? item.salary ?? null,
                 postedDate,
                 source: 'linkedin',

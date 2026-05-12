@@ -132,7 +132,7 @@ export function countryFromLocation(loc: string): string {
 }
 
 /** Strip HTML tags + collapse whitespace. */
-export function cleanText(s: string | null | undefined, maxLen = 500): string {
+export function cleanText(s: string | null | undefined, maxLen = 6000): string {
   if (!s) return '';
   return s
     .replace(/<[^>]+>/g, ' ')

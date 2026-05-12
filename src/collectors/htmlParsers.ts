@@ -163,7 +163,7 @@ export function jsonLdToRawJob(jp: JsonLdJobPosting, opts: JsonLdToJobOpts): Raw
   if (jlt === 'TELECOMMUTE' || jlt.includes('REMOTE')) remote = 'remote';
 
   // Description — cap to 500 chars
-  const description = cleanText(jp.description ?? '', 500);
+  const description = cleanText(jp.description ?? '');
 
   let url = (jp.url ?? '').trim();
   if (url && opts.urlBase && url.startsWith('/')) {

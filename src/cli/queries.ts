@@ -243,7 +243,7 @@ export function showJob(idOrPrefix: string): string {
   lines.push('');
   lines.push('## Snippet');
   lines.push('');
-  lines.push(job.descriptionSnippet || '(none)');
+  lines.push((job.descriptionSnippet || '(none)').substring(0, 800));
   lines.push('');
   lines.push('## Score breakdown');
   lines.push('');

@@ -114,7 +114,7 @@ export const ashbyCollector: Collector = {
             country,
             remote,
             url: j.jobUrl ?? j.applyUrl ?? '',
-            descriptionSnippet: cleanText(j.descriptionPlain ?? j.descriptionHtml ?? '', 500),
+            descriptionSnippet: cleanText(j.descriptionPlain ?? j.descriptionHtml ?? ''),
             salary: j.compensation?.compensationTierSummary ?? null,
             postedDate,
             source: 'ashby',

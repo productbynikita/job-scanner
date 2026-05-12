@@ -114,7 +114,7 @@ export const leverCollector: Collector = {
             country,
             remote,
             url: p.hostedUrl,
-            descriptionSnippet: cleanText(p.descriptionPlain ?? p.description ?? '', 500),
+            descriptionSnippet: cleanText(p.descriptionPlain ?? p.description ?? ''),
             salary: null,
             postedDate,
             source: 'lever',

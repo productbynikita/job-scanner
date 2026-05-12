@@ -124,7 +124,7 @@ export const workableCollector: Collector = {
             country,
             remote,
             url: jobUrl,
-            descriptionSnippet: cleanText(j.description ?? '', 500),
+            descriptionSnippet: cleanText(j.description ?? ''),
             salary: null,
             postedDate,
             source: 'workable',

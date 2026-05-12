@@ -304,7 +304,7 @@ async function replayDatasets(opts: {
           country: countryFromLocation(location) || '',
           remote: detectRemote(raw, location),
           url,
-          descriptionSnippet: cleanText(pickDescription(raw), 500),
+          descriptionSnippet: cleanText(pickDescription(raw)),
           salary: pickSalary(raw),
           postedDate: parsePostedDate(raw, runDate),
           source: 'linkedin',
