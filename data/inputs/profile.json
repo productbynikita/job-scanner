@@ -1,0 +1,82 @@
+{
+  "_readme": "Fill this in to personalise scoring. After editing, run: npm run rescore",
+
+  "background": {
+    "current_title": "",
+    "years_experience": null,
+    "seniority": "senior",
+    "_seniority_options": ["junior", "mid", "senior", "lead", "staff", "principal"]
+  },
+
+  "target_roles": {
+    "primary": [
+      "Senior Product Manager",
+      "Technical Product Manager",
+      "Product Manager"
+    ],
+    "open_to": [
+      "Staff Product Manager",
+      "Lead Product Manager",
+      "Product Owner"
+    ],
+    "not_interested_in": [
+      "Director of Product",
+      "VP Product",
+      "CPO",
+      "Product Marketing Manager"
+    ]
+  },
+
+  "domains": {
+    "_readme": "List the product areas you have worked in or are targeting. These are used to boost domain scores. Be specific — e.g. 'payments', 'API platform', 'healthcare data', 'logistics SaaS'.",
+    "strong": [],
+    "learning_or_open_to": [],
+    "not_interested_in": []
+  },
+
+  "tech_stack": {
+    "_readme": "Technologies you know well and would mention in an interview.",
+    "known": [],
+    "preferred": []
+  },
+
+  "company_preferences": {
+    "stages": [],
+    "_stages_options": ["seed", "series-a", "series-b", "growth", "pre-ipo", "public", "enterprise"],
+    "min_size": null,
+    "max_size": null,
+    "types": [],
+    "_type_options": ["startup", "scaleup", "enterprise", "consulting", "agency"],
+    "industries_loved": [],
+    "industries_avoided": ["defense", "gambling", "tobacco"]
+  },
+
+  "work_preferences": {
+    "remote": "hybrid",
+    "_remote_options": ["remote", "hybrid", "onsite", "any"],
+    "target_countries": ["DE", "NL", "CH", "BE"],
+    "relocation_open": false,
+    "languages_spoken": ["english"],
+    "german_level": null,
+    "_german_level_options": ["A1", "A2", "B1", "B2", "C1", "C2", "native"]
+  },
+
+  "compensation": {
+    "currency": "EUR",
+    "min_annual_gross": null,
+    "equity_important": false,
+    "note": ""
+  },
+
+  "deal_breakers": {
+    "_readme": "Hard no's. Jobs matching any of these will be flagged or scored down.",
+    "keywords_in_jd": [],
+    "company_names": [],
+    "title_patterns": []
+  },
+
+  "bonus_signals": {
+    "_readme": "Things that make a role more exciting to you specifically. Add keywords that appear in JDs you'd apply to immediately.",
+    "keywords": []
+  }
+}

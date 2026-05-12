@@ -26,6 +26,7 @@
     "compare": "tsx src/cli/index.ts compare",
     "where:best": "tsx src/cli/index.ts where-best",
     "replay": "tsx src/cli/replay-datasets.ts",
+    "rescore": "tsx src/cli/rescore.ts",
     "assess": "tsx src/cli/index.ts assess",
     "tailor-cv": "tsx src/cli/index.ts tailor-cv",
     "cover": "tsx src/cli/index.ts cover",
