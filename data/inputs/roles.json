@@ -86,9 +86,7 @@
       "ERP integration",
       "SAP integration",
       "integration middleware",
-      "data integration platform"
-    ],
-    "secondary": [
+      "data integration platform",
       "FHIR",
       "re:\\bHIS\\b",
       "HL7",
@@ -96,7 +94,9 @@
       "hospital information system",
       "healthcare interoperability",
       "clinical data",
-      "health data exchange",
+      "health data exchange"
+    ],
+    "secondary": [
       "B2B e-commerce",
       "e-commerce platform",
       "digital onboarding",
