@@ -4,6 +4,8 @@ data/jobs.db
 data/jobs.db-journal
 data/jobs.db-wal
 data/jobs.db-shm
+# Raw Apify dataset cache — large JSON files, not for version control
+data/cache/
 *.log
 .env
 .env.local

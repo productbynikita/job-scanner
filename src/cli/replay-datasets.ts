@@ -7,6 +7,10 @@
  * re-runs dedup + language + scoring, and writes to the DB — no new API
  * calls to LinkedIn.
  *
+ * Local cache: raw datasets are saved to data/cache/apify-datasets/<runId>.json
+ * on first fetch. Subsequent replays read from disk, so data survives Apify's
+ * 7-day dataset retention policy.
+ *
  * Usage:
  *   npm run replay                       # replay all SUCCEEDED runs
  *   npm run replay -- --actor <name>     # replay runs from a specific actor
@@ -19,6 +23,8 @@ import 'dotenv/config';
 import { Command } from 'commander';
 import kleur from 'kleur';
 import { ApifyClient } from 'apify-client';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { loadAllConfig } from '../config/loader.js';
 import { dedupeAndMerge } from '../processors/dedupe.js';
 import { detectLanguage, hasHardLanguageRequirement } from '../processors/language.js';
@@ -29,6 +35,45 @@ import type { RawJob, Job } from '../types/job.js';
 import { createLogger } from '../logger.js';
 
 const log = createLogger('replay');
+
+// ---------------------------------------------------------------------------
+// Local dataset cache — avoids Apify 7-day retention cliff
+// Saves data/cache/apify-datasets/<runId>.json on first fetch.
+// Subsequent replays read from disk; Apify is never called again for that run.
+// ---------------------------------------------------------------------------
+
+const CACHE_DIR = resolve(process.cwd(), 'data/cache/apify-datasets');
+
+function ensureCacheDir(): void {
+  if (!existsSync(CACHE_DIR)) {
+    mkdirSync(CACHE_DIR, { recursive: true });
+    log.debug('created cache dir', { path: CACHE_DIR });
+  }
+}
+
+interface CachedDataset {
+  runId: string;
+  startedAt: string;
+  inputLabel: string;
+  items: ApifyItem[];
+  cachedAt: string;
+}
+
+function readCache(runId: string): CachedDataset | null {
+  const path = resolve(CACHE_DIR, `${runId}.json`);
+  if (!existsSync(path)) return null;
+  try {
+    return JSON.parse(readFileSync(path, 'utf-8')) as CachedDataset;
+  } catch {
+    return null;
+  }
+}
+
+function writeCache(data: CachedDataset): void {
+  ensureCacheDir();
+  const path = resolve(CACHE_DIR, `${data.runId}.json`);
+  writeFileSync(path, JSON.stringify(data, null, 2), 'utf-8');
+}
 
 const DEFAULT_ACTOR = 'worldunboxer/rapid-linkedin-scraper';
 
@@ -213,7 +258,30 @@ async function replayDatasets(opts: {
     );
 
     try {
-      const { items } = await client.dataset(run.defaultDatasetId).listItems({ limit: 200 });
+      // --- Local cache lookup -------------------------------------------
+      let cached = readCache(run.id);
+      let items: ApifyItem[];
+      let fromCache = false;
+
+      if (cached) {
+        items = cached.items;
+        // Backfill inputLabel from cache if we couldn't read it from KV store
+        if (inputLabel === run.id && cached.inputLabel) inputLabel = cached.inputLabel;
+        fromCache = true;
+      } else {
+        const result = await client.dataset(run.defaultDatasetId).listItems({ limit: 200 });
+        items = result.items as ApifyItem[];
+        // Persist to disk so future replays survive Apify's 7-day retention
+        writeCache({
+          runId: run.id,
+          startedAt: run.startedAt ? new Date(run.startedAt).toISOString() : new Date().toISOString(),
+          inputLabel,
+          items,
+          cachedAt: new Date().toISOString(),
+        });
+      }
+      // ------------------------------------------------------------------
+
       totalFetched += items.length;
 
       // Use the run's start date as reference for relative-time strings like
@@ -221,7 +289,7 @@ async function replayDatasets(opts: {
       const runDate = new Date(run.startedAt ?? Date.now());
 
       let kept = 0;
-      for (const raw of items as ApifyItem[]) {
+      for (const raw of items) {
         const title = pickTitle(raw);
         const company = pickCompany(raw);
         const url = pickUrl(raw);
@@ -244,7 +312,8 @@ async function replayDatasets(opts: {
         });
         kept++;
       }
-      process.stdout.write(kleur.green(` ${items.length} fetched → ${kept} PM roles\n`));
+      const cacheTag = fromCache ? kleur.dim(' [cache]') : kleur.dim(' [apify]');
+      process.stdout.write(kleur.green(` ${items.length} fetched → ${kept} PM roles`) + cacheTag + '\n');
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       process.stdout.write(kleur.red(` ERROR: ${msg}\n`));
