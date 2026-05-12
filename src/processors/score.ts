@@ -181,6 +181,22 @@ function scoreBonus(text: string, roles: Roles): { points: number; reasons: stri
     points += rules.healthtechOrFintech;
     reasons.push('healthtech/fintech');
   }
+  if (['sap cx', 'sap customer experience', 'salesforce', 'crm platform', 'crm integration'].some((kw) => lower.includes(kw))) {
+    points += rules.sapCxOrCrm ?? 0;
+    reasons.push('SAP CX / CRM platform');
+  }
+  if (['llm', 'ai workflow', 'ai-assisted', 'generative ai', 'gen ai', 'copilot'].some((kw) => lower.includes(kw))) {
+    points += rules.aiOrLlmProduct ?? 0;
+    reasons.push('AI/LLM product');
+  }
+  if (['s/4hana', 's4hana', 'hana transformation'].some((kw) => lower.includes(kw))) {
+    points += rules.s4hana ?? 0;
+    reasons.push('S/4HANA');
+  }
+  if (['developer experience', 'devex', 'dx ', 'developer portal', 'developer platform'].some((kw) => lower.includes(kw))) {
+    points += rules.developerExperience ?? 0;
+    reasons.push('developer experience');
+  }
 
   return { points, reasons };
 }

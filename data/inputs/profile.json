@@ -1,82 +1,129 @@
 {
-  "_readme": "Fill this in to personalise scoring. After editing, run: npm run rescore",
+  "_readme": "Your personal profile. After editing, run: npm run rescore",
 
   "background": {
-    "current_title": "",
-    "years_experience": null,
+    "name": "Nikita Singh",
+    "current_title": "Technical Product Manager (Senior Consultant)",
+    "current_company": "Ernst & Young (EY)",
+    "location": "Düsseldorf, Germany",
+    "years_experience": 9,
     "seniority": "senior",
-    "_seniority_options": ["junior", "mid", "senior", "lead", "staff", "principal"]
+    "education": [
+      "MBA – WHU Otto Beisheim School of Management",
+      "B.Tech Computer Science – S'O'A University (Gold Medallist, 1.3)"
+    ],
+    "certifications": ["PSM I", "ITIL 4 Foundation"],
+    "languages": {
+      "english": "native",
+      "hindi": "native",
+      "german": "B1"
+    }
   },
 
   "target_roles": {
     "primary": [
       "Senior Product Manager",
       "Technical Product Manager",
-      "Product Manager"
+      "Senior Technical Product Manager",
+      "Senior Product Owner",
+      "Technical Product Owner"
     ],
     "open_to": [
-      "Staff Product Manager",
       "Lead Product Manager",
+      "Staff Product Manager",
+      "Platform Product Manager",
+      "Product Manager",
       "Product Owner"
     ],
     "not_interested_in": [
       "Director of Product",
       "VP Product",
       "CPO",
-      "Product Marketing Manager"
+      "Product Marketing Manager",
+      "Junior Product Manager",
+      "Associate Product Manager"
     ]
   },
 
   "domains": {
-    "_readme": "List the product areas you have worked in or are targeting. These are used to boost domain scores. Be specific — e.g. 'payments', 'API platform', 'healthcare data', 'logistics SaaS'.",
-    "strong": [],
-    "learning_or_open_to": [],
-    "not_interested_in": []
+    "strong": [
+      "API platforms and integration",
+      "Enterprise SaaS (B2B)",
+      "SAP ecosystem (BTP, CPI, CX, S/4HANA)",
+      "Healthcare data and interoperability (FHIR, HL7, hospital systems)",
+      "CRM platforms (SAP CX, enterprise CRM)",
+      "B2B e-commerce (Henkel €3.3B platform)",
+      "Workflow automation and digital onboarding",
+      "ERP integration and transformation",
+      "Developer tools and platform engineering",
+      "AI-assisted product workflows and LLM tooling"
+    ],
+    "learning_or_open_to": [
+      "Payments and fintech platforms",
+      "Data platforms and analytics",
+      "Marketplace and multi-sided platforms",
+      "GenAI / AI product management"
+    ],
+    "not_interested_in": [
+      "Defense or security",
+      "Gambling or tobacco",
+      "Pure hardware or embedded systems"
+    ]
   },
 
   "tech_stack": {
-    "_readme": "Technologies you know well and would mention in an interview.",
-    "known": [],
-    "preferred": []
+    "known": [
+      "REST APIs", "Java", "Node.js", "JavaScript",
+      "SQL", "AWS", "Microservices", "Event-driven architecture",
+      "FHIR", "HL7", "OpenAPI / Swagger", "Postman",
+      "Jira", "Confluence", "Git", "GA4", "Power BI",
+      "SAP BTP", "SAP CPI", "S/4HANA", "Low-code/no-code"
+    ],
+    "preferred_product_env": [
+      "API-first products", "Platform products", "B2B SaaS",
+      "Technical PM with engineering collaboration", "Cross-functional international teams"
+    ]
   },
 
   "company_preferences": {
-    "stages": [],
-    "_stages_options": ["seed", "series-a", "series-b", "growth", "pre-ipo", "public", "enterprise"],
-    "min_size": null,
-    "max_size": null,
-    "types": [],
-    "_type_options": ["startup", "scaleup", "enterprise", "consulting", "agency"],
-    "industries_loved": [],
-    "industries_avoided": ["defense", "gambling", "tobacco"]
+    "stages": ["series-b", "growth", "pre-ipo", "public", "enterprise"],
+    "min_size": 50,
+    "types": ["scaleup", "enterprise"],
+    "industries_loved": [
+      "healthtech", "enterprise SaaS", "developer tools",
+      "B2B platform", "fintech", "logistics tech", "AI / automation"
+    ],
+    "industries_avoided": ["defense", "gambling", "tobacco", "crypto-only"]
   },
 
   "work_preferences": {
     "remote": "hybrid",
-    "_remote_options": ["remote", "hybrid", "onsite", "any"],
     "target_countries": ["DE", "NL", "CH", "BE"],
+    "remote_eu_acceptable": true,
     "relocation_open": false,
-    "languages_spoken": ["english"],
-    "german_level": null,
-    "_german_level_options": ["A1", "A2", "B1", "B2", "C1", "C2", "native"]
+    "visa_status": "EU Blue Card (Germany) — portable within EU after 18 months",
+    "languages_spoken": ["English (native)", "Hindi (native)", "German B1"]
   },
 
   "compensation": {
     "currency": "EUR",
-    "min_annual_gross": null,
-    "equity_important": false,
-    "note": ""
+    "note": "Switzerland roles acceptable in CHF at equivalent purchasing power"
   },
 
   "deal_breakers": {
-    "_readme": "Hard no's. Jobs matching any of these will be flagged or scored down.",
     "keywords_in_jd": [],
     "company_names": [],
-    "title_patterns": []
+    "title_patterns": ["Junior", "Associate", "Intern", "Graduate", "Trainee"]
   },
 
   "bonus_signals": {
-    "_readme": "Things that make a role more exciting to you specifically. Add keywords that appear in JDs you'd apply to immediately.",
-    "keywords": []
+    "_readme": "JD keywords that trigger an extra score boost for you specifically",
+    "keywords": [
+      "SAP BTP", "SAP CX", "S/4HANA", "FHIR", "HL7",
+      "API platform", "integration platform", "developer experience",
+      "CRM platform", "enterprise integration", "workflow automation",
+      "LLM", "generative AI", "AI-assisted", "digital transformation",
+      "visa sponsorship", "relocation", "blue card"
+    ]
   }
 }

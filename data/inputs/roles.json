@@ -15,7 +15,11 @@
       "Principal Product Manager",
       "Product Manager Platform",
       "Product Manager API",
-      "Senior Product Manager Platform"
+      "Senior Product Manager Platform",
+      "Senior Technical Product Owner",
+      "Lead Technical Product Manager",
+      "Technical Product Manager Platform",
+      "Platform Product Manager"
     ],
     "weak_match": [
       "Product Manager",
@@ -74,7 +78,15 @@
       "REST API",
       "event-driven",
       "integration platform",
-      "iPaaS"
+      "iPaaS",
+      "CRM platform",
+      "CRM integration",
+      "customer experience platform",
+      "enterprise integration",
+      "ERP integration",
+      "SAP integration",
+      "integration middleware",
+      "data integration platform"
     ],
     "secondary": [
       "FHIR",
@@ -84,7 +96,15 @@
       "hospital information system",
       "healthcare interoperability",
       "clinical data",
-      "health data exchange"
+      "health data exchange",
+      "B2B e-commerce",
+      "e-commerce platform",
+      "digital onboarding",
+      "partner onboarding",
+      "self-serve onboarding",
+      "subscription management",
+      "CRM SaaS",
+      "customer data platform"
     ],
     "tertiary": [
       "SAP BTP",
@@ -92,7 +112,13 @@
       "SAP API Management",
       "S/4HANA",
       "YaaS",
-      "Health Data Services"
+      "Health Data Services",
+      "SAP Customer Experience",
+      "SAP CX",
+      "SAP Health",
+      "SAP Hybris",
+      "S/4HANA transformation",
+      "ITIL"
     ],
     "general_tech": [
       "SaaS",
@@ -126,7 +152,20 @@
       "supply chain software",
       "logistics software",
       "IoT platform",
-      "mobile platform"
+      "mobile platform",
+      "AI workflow",
+      "LLM",
+      "AI-assisted",
+      "workflow platform",
+      "enterprise onboarding",
+      "digital transformation",
+      "partner ecosystem",
+      "subscription platform",
+      "developer portal",
+      "API-first",
+      "OpenAPI",
+      "event-driven architecture",
+      "B2B platform integration"
     ]
   },
   "industries": {
@@ -179,7 +218,7 @@
       "english_primary": 15,
       "english_acceptable": 12,
       "german_b1_acceptable": 10,
-      "language_risk_perfect_fit": 7,
+      "language_risk_perfect_fit": 10,
       "non_english_required": 0
     },
     "location": {
@@ -207,7 +246,11 @@
       "fhir_or_hl7": 3,
       "sap_btp": 3,
       "remote_or_hybrid": 1,
-      "healthtech_or_fintech": 2
+      "healthtech_or_fintech": 2,
+      "sap_cx_or_crm": 3,
+      "ai_or_llm_product": 3,
+      "s4hana": 3,
+      "developer_experience": 2
     }
   }
 }

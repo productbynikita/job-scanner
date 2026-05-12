@@ -117,6 +117,10 @@ export interface Roles {
       sapBtp: number;
       remoteOrHybrid: number;
       healthtechOrFintech: number;
+      sapCxOrCrm?: number;
+      aiOrLlmProduct?: number;
+      s4hana?: number;
+      developerExperience?: number;
     };
   };
 }
