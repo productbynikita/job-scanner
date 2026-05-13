@@ -15,7 +15,8 @@ import { Command } from 'commander';
 import kleur from 'kleur';
 import { runScan } from '../scanner.js';
 import type { ScanMode } from '../collectors/registry.js';
-import { showTop, showNew, showStats, showSummary, compare, whereBest, showJob } from './queries.js';
+import { showTop, showNew, showStats, showSummary, showTracker, compare, whereBest, showJob, showWatchlist } from './queries.js';
+import { getDb, updateCareerOps, getJobById } from '../storage/db.js';
 
 const program = new Command();
 
@@ -62,6 +63,7 @@ program
         'linkedin',
         'glassdoor',
         'agencies',
+        'watchlist',
       ];
 
       if (!validModes.includes(opts.mode as ScanMode)) {
@@ -81,17 +83,6 @@ program
         maxResultsPerSource: opts.maxPerSource,
       });
 
-      if (result.topJobs.length > 0) {
-        console.log(kleur.bold('Top 5'));
-        for (const j of result.topJobs.slice(0, 5)) {
-          const risk = j.languageRisk ? kleur.yellow(' ⚠') : '';
-          console.log(
-            `  ${kleur.cyan(String(j.score).padStart(3))} ${j.title.padEnd(40)} @ ${j.company} (${j.country})${risk}`,
-          );
-        }
-        console.log();
-      }
-
       console.log(kleur.dim('Use `npm run show:new` to see all new jobs.'));
       process.exit(0);
     },
@@ -102,18 +93,49 @@ const show = program.command('show').description('Read-only commands (no scan)')
 
 show
   .command('top [n]')
-  .description('Show top N jobs by score')
+  .description('Show top N jobs by score across all scans (excludes applied/passed)')
   .option('--include-agency', 'include agency jobs')
-  .option('--min-domain <n>', 'minimum domain fit score (0-25). Filters out non-tech roles', (v) => parseInt(v, 10))
-  .action((n: string | undefined, opts: { includeAgency?: boolean; minDomain?: number }) => {
-    const num = n ? parseInt(n, 10) : 10;
-    console.log(showTop(num, opts.includeAgency ?? false, opts.minDomain ?? 0));
+  .option('--min-domain <n>', 'minimum domain fit score (0-25)', (v) => parseInt(v, 10))
+  .option('--min-score <n>', 'minimum total score (default 70 unless [n] is given)', (v) => parseInt(v, 10))
+  .option('--posted <days>', 'only postings ≤ N days old (uses posting date)', (v) => parseInt(v, 10))
+  .option('--scanned <days>', 'only jobs first scanned within last N days', (v) => parseInt(v, 10))
+  .option('--all', 'include applied + passed (otherwise hidden)')
+  .option('--compact', 'one line per job (table view)')
+  .action((n: string | undefined, opts: {
+    includeAgency?: boolean;
+    minDomain?: number;
+    minScore?: number;
+    posted?: number;
+    scanned?: number;
+    all?: boolean;
+    compact?: boolean;
+  }) => {
+    console.log(showTop({
+      n: n ? parseInt(n, 10) : null,
+      includeAgency: opts.includeAgency ?? false,
+      minDomain: opts.minDomain ?? 0,
+      minScore: opts.minScore,
+      postedWithin: opts.posted,
+      scannedWithin: opts.scanned,
+      all: opts.all ?? false,
+      compact: opts.compact ?? false,
+    }));
   });
+
+show
+  .command('tracker')
+  .description('Application tracker — jobs you marked as applied, grouped by stage')
+  .action(() => console.log(showTracker()));
 
 show
   .command('new')
   .description('Show jobs added since the last scan')
   .action(() => console.log(showNew()));
+
+show
+  .command('watchlist')
+  .description('Show jobs from your target companies + coverage report for Workday/custom companies')
+  .action(() => console.log(showWatchlist()));
 
 show
   .command('stats')
@@ -180,6 +202,85 @@ program
   .action(async (jobId: string, opts: { yes?: boolean }) => {
     const { runEnrich } = await import('./enrich.js');
     await runEnrich({ jobId, skipConfirm: opts.yes });
+  });
+
+// ------------------------------------------------------------------ mark
+const DECISIONS = ['applied', 'passed', 'shortlist', 'watch'] as const;
+const STAGES = ['applied', 'screening', 'interview', 'onsite', 'offer', 'rejected', 'declined', 'ghosted'] as const;
+
+program
+  .command('mark <jobId> <value>')
+  .description(
+    'Tag a job. Triage: applied|passed|shortlist|watch. Stages (auto-marks applied): screening|interview|onsite|offer|rejected|declined|ghosted',
+  )
+  .option('--note <text>', 'optional note')
+  .action((jobId: string, value: string, opts: { note?: string }) => {
+    const isDecision = (DECISIONS as readonly string[]).includes(value);
+    const isStage = (STAGES as readonly string[]).includes(value);
+
+    if (!isDecision && !isStage) {
+      console.error(
+        kleur.red(`Invalid value '${value}'.\n  Triage: ${DECISIONS.join('|')}\n  Stage: ${STAGES.join('|')}`),
+      );
+      process.exit(1);
+    }
+
+    // Resolve prefix → full ID
+    const db = getDb();
+    const rows = db
+      .prepare(`SELECT id, title, company FROM jobs WHERE id LIKE ? LIMIT 2`)
+      .all(`${jobId}%`) as Array<{ id: string; title: string; company: string }>;
+
+    if (rows.length === 0) {
+      console.error(kleur.red(`No job found with ID prefix '${jobId}'.`));
+      process.exit(1);
+    }
+    if (rows.length > 1) {
+      console.error(kleur.red(`Prefix '${jobId}' is ambiguous — use a longer prefix.`));
+      process.exit(1);
+    }
+
+    const row = rows[0]!;
+    const today = new Date().toISOString().slice(0, 10);
+    const existing = getJobById(row.id);
+    const prevCareerOps = existing?.careerOps ?? {};
+
+    const updates: Record<string, unknown> = {};
+
+    if (isStage) {
+      // Any stage value implies decision=applied
+      updates.decision = 'applied';
+      updates.stage = value;
+      updates.stageUpdatedAt = today;
+      // Preserve original appliedDate if already set, else stamp it now
+      if (!prevCareerOps.appliedDate) updates.appliedDate = today;
+      if (!prevCareerOps.decisionDate) updates.decisionDate = today;
+    } else {
+      // Pure triage decision
+      updates.decision = value;
+      updates.decisionDate = today;
+      if (value === 'applied') {
+        if (!prevCareerOps.appliedDate) updates.appliedDate = today;
+        if (!prevCareerOps.stage) updates.stage = 'applied';
+        updates.stageUpdatedAt = today;
+      }
+    }
+
+    if (opts.note) updates.notes = opts.note;
+
+    const ok = updateCareerOps(row.id, updates);
+    if (!ok) {
+      console.error(kleur.red('Update failed.'));
+      process.exit(1);
+    }
+
+    const label = isStage ? `applied → ${value}` : value;
+    console.log(kleur.green(`✓ Marked as '${label}': ${row.title} @ ${row.company}`));
+    if (updates.decision === 'applied') {
+      console.log(kleur.dim(`  moved to tracker — see with: npm run show:tracker`));
+    } else if (updates.decision === 'passed') {
+      console.log(kleur.dim(`  hidden from show:top — use --all to retrieve`));
+    }
   });
 
 // ------------------------------------------------------------------ AI commands (Phase 6)

@@ -57,15 +57,12 @@
       "https://www.welcometothejungle.com/en/jobs?query=product%20owner"
     ]
   },
-  "eures": {
+  "_eures_disabled": {
+    "_comment": "EURES API now requires session authentication (migrated 2023). Re-enable when a public endpoint is confirmed.",
     "name": "EURES (EU official)",
     "country": "multi",
     "parser": "jsonld",
     "rateLimitMs": 1000,
-    "urls": [
-      "https://eures.europa.eu/eures-apps/searchengine/page/jv-search/search?lang=en&keywords=senior+product+manager&locationCodes=DE,NL,BE",
-      "https://eures.europa.eu/eures-apps/searchengine/page/jv-search/search?lang=en&keywords=technical+product+manager&locationCodes=DE,NL,BE",
-      "https://eures.europa.eu/eures-apps/searchengine/page/jv-search/search?lang=en&keywords=product+owner&locationCodes=DE,NL,BE"
-    ]
+    "urls": []
   }
 }

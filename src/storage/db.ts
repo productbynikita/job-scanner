@@ -130,6 +130,42 @@ export function getAllJobs(includeAgency = false): Job[] {
   return rows.map(rowToJob);
 }
 
+/**
+ * The "pool" of jobs you might still apply to.
+ * Excludes jobs you've already passed on or applied to (those live in the tracker).
+ * Includes jobs from any scan — the scoring is what matters, not the freshness.
+ */
+export function getReviewableJobs(includeAgency = false): Job[] {
+  const db = getDb();
+  const agencyClause = includeAgency ? '' : 'AND is_agency = 0';
+  const rows = db
+    .prepare(
+      `SELECT * FROM jobs
+       WHERE 1=1 ${agencyClause}
+       AND (json_extract(career_ops, '$.decision') IS NULL
+            OR json_extract(career_ops, '$.decision') NOT IN ('passed', 'applied'))
+       ORDER BY score DESC, first_seen DESC`,
+    )
+    .all() as JobRow[];
+  return rows.map(rowToJob);
+}
+
+/**
+ * Jobs marked as applied — feeds the tracker view.
+ * Includes anything where decision='applied', regardless of stage.
+ */
+export function getAppliedJobs(): Job[] {
+  const db = getDb();
+  const rows = db
+    .prepare(
+      `SELECT * FROM jobs
+       WHERE json_extract(career_ops, '$.decision') = 'applied'
+       ORDER BY json_extract(career_ops, '$.appliedDate') DESC, score DESC`,
+    )
+    .all() as JobRow[];
+  return rows.map(rowToJob);
+}
+
 export function getAgencyJobs(): Job[] {
   const db = getDb();
   const rows = db
@@ -247,6 +283,29 @@ export function markStaleJobs(scanDate: string, isAgency: boolean): number {
 export function clearNewStatus(): void {
   const db = getDb();
   db.prepare(`UPDATE jobs SET status = 'active' WHERE status = 'new'`).run();
+}
+
+/**
+ * Update the career_ops JSON column for a job.
+ * Merges the provided fields into the existing career_ops object.
+ */
+export function updateCareerOps(id: string, updates: Record<string, unknown>): boolean {
+  const db = getDb();
+  const row = db.prepare(`SELECT career_ops FROM jobs WHERE id = ?`).get(id) as
+    | { career_ops: string | null }
+    | undefined;
+  if (!row) return false;
+
+  let existing: Record<string, unknown>;
+  try {
+    existing = JSON.parse(row.career_ops ?? '{}');
+  } catch {
+    existing = {};
+  }
+  Object.assign(existing, updates);
+
+  db.prepare(`UPDATE jobs SET career_ops = ? WHERE id = ?`).run(JSON.stringify(existing), id);
+  return true;
 }
 
 /**

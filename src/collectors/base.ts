@@ -68,6 +68,7 @@ export async function fetchText(
     timeoutMs?: number;
     userAgent?: string;
     accept?: string;
+    extraHeaders?: Record<string, string>;
     logger?: { trace: (msg: string, fields?: Record<string, unknown>) => void };
   } = {},
 ): Promise<{ status: 'ok' | 'error' | 'blocked'; text: string; statusCode?: number }> {
@@ -82,9 +83,12 @@ export async function fetchText(
     const resp = await fetch(url, {
       headers: {
         'User-Agent':
-          opts.userAgent ?? 'Mozilla/5.0 (compatible; JobScanner/0.1; +personal-use)',
-        Accept: opts.accept ?? 'text/html,application/json,application/xml',
-        'Accept-Language': 'en-US,en;q=0.9',
+          opts.userAgent ??
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        Accept: opts.accept ?? 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9,de;q=0.8',
+        'Cache-Control': 'no-cache',
+        ...opts.extraHeaders,
       },
       signal: controller.signal,
     });

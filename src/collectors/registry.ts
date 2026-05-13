@@ -19,6 +19,7 @@ import { welcomeToJungleCollector } from './welcomeToJungle.js';
 import { euresCollector } from './eures.js';
 import { linkedinCollector } from './linkedin.js';
 import { agenciesCollector } from './agency.js';
+import { watchlistCollector } from './watchlist.js';
 
 export const ALL_COLLECTORS: Collector[] = [
   // Tier 1 — remote-friendly aggregators
@@ -41,6 +42,8 @@ export const ALL_COLLECTORS: Collector[] = [
   linkedinCollector,
   // Tier 5 — Recruiting agencies (Phase 5)
   agenciesCollector,
+  // Tier 6 — Target company watchlist
+  watchlistCollector,
 ];
 
 export type ScanMode =
@@ -52,7 +55,29 @@ export type ScanMode =
   | 'linkedin'
   | 'glassdoor'
   | 'ats'
-  | 'country';
+  | 'country'
+  | 'watchlist';
+
+export type SourceCategory = 'job_board' | 'ats' | 'agency' | 'watchlist';
+
+export const SOURCE_CATEGORY_MAP: Record<string, SourceCategory> = {
+  remoteok:         'job_board',
+  weworkremotely:   'job_board',
+  indeed:           'job_board',
+  stepstone_de:     'job_board',
+  stepstone_be:     'job_board',
+  jobs_ch:          'job_board',
+  nl_vacaturebank:  'job_board',
+  welcome_to_jungle:'job_board',
+  eures:            'job_board',
+  linkedin:         'job_board',
+  greenhouse:       'ats',
+  lever:            'ats',
+  ashby:            'ats',
+  workable:         'ats',
+  watchlist:        'watchlist',
+  agencies:         'agency',
+};
 
 // Common collector lists
 const REMOTE_SOURCES = ['remoteok', 'weworkremotely'];
@@ -91,6 +116,8 @@ const MODE_TO_COLLECTORS: Record<ScanMode, string[]> = {
   // Phase 5 — Recruiting agencies
   agencies: ['agencies'],
   glassdoor: [], // intentionally never wired — user opted out
+  // Target company watchlist — scans only your named target companies
+  watchlist: ['watchlist'],
 };
 
 export function getCollectorsForMode(mode: ScanMode): Collector[] {

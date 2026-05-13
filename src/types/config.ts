@@ -167,3 +167,19 @@ export interface CountrySourceEntry {
 }
 
 export type CountrySources = Record<string, CountrySourceEntry>;
+
+export type WatchlistAts = 'greenhouse' | 'ashby' | 'lever' | 'workday' | 'custom' | 'unknown';
+
+export interface WatchlistEntry {
+  name: string;
+  tier: string;
+  ats: WatchlistAts;
+  slug?: string;
+  country: string;
+  industry: string;
+  note?: string;
+}
+
+export interface Watchlist {
+  companies: WatchlistEntry[];
+}

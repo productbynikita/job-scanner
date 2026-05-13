@@ -20,7 +20,7 @@ import {
   getNewJobIdsSet,
   type ScanLogEntry,
 } from './storage/db.js';
-import { getCollectorsForMode, type ScanMode } from './collectors/registry.js';
+import { getCollectorsForMode, SOURCE_CATEGORY_MAP, type ScanMode } from './collectors/registry.js';
 import type { Job, RawJob, ScanStats } from './types/job.js';
 import { createLogger, logBanner, logSection } from './logger.js';
 
@@ -34,7 +34,7 @@ export interface RunScanResult {
   scanDate: string;
   durationMs: number;
   stats: ScanStats;
-  perSource: Record<string, { fetches: number; jobsFound: number; errors: string[] }>;
+  perSource: Record<string, { fetches: number; jobsFound: number; errors: string[]; category: string }>;
   topJobs: Job[];
 }
 
@@ -89,7 +89,35 @@ export async function runScan(opts: RunScanOptions): Promise<RunScanResult> {
   // ----------------------------------------------------------------------
   // Phase: COLLECTION
   // ----------------------------------------------------------------------
-  logSection('Collection — fetching from sources');
+  {
+    // Print a structured "what we're querying" table before collectors run
+    const byCategory: Record<string, string[]> = {
+      'Job boards':    [],
+      'ATS companies': [],
+      'Agencies':      [],
+      'Watchlist':     [],
+    };
+    for (const c of collectors) {
+      const cat = SOURCE_CATEGORY_MAP[c.id] ?? 'job_board';
+      if (cat === 'job_board')  byCategory['Job boards']!.push(c.id);
+      else if (cat === 'ats')   byCategory['ATS companies']!.push(c.id);
+      else if (cat === 'agency') byCategory['Agencies']!.push(c.id);
+      else if (cat === 'watchlist') byCategory['Watchlist']!.push(c.id);
+    }
+
+    const W = 62;
+    const hr = '─'.repeat(W);
+    console.log(`\n${kleur.bold().cyan(hr)}`);
+    console.log(kleur.bold(`  Collection — ${collectors.length} source${collectors.length !== 1 ? 's' : ''}`));
+    console.log(kleur.bold().cyan(hr));
+    for (const [label, ids] of Object.entries(byCategory)) {
+      if (ids.length === 0) continue;
+      const pad = label.padEnd(16);
+      console.log(`  ${kleur.dim(pad)} ${ids.join('  ')}`);
+    }
+    console.log();
+  }
+
   const collectorStartedAt = Date.now();
 
   const results = await Promise.all(
@@ -113,13 +141,14 @@ export async function runScan(opts: RunScanOptions): Promise<RunScanResult> {
     durationMs: collectorDurationMs,
   });
 
-  // Aggregate per-source stats
+  // Aggregate per-source stats (category stored for display)
   const perSource: RunScanResult['perSource'] = {};
   for (const r of results) {
     perSource[r.sourceId] = {
       fetches: 1,
       jobsFound: r.jobsFound,
       errors: r.errors,
+      category: SOURCE_CATEGORY_MAP[r.sourceId] ?? 'job_board',
     };
     if (r.errors.length > 0) {
       log.warn(`${r.sourceId} reported errors`, {
@@ -150,6 +179,7 @@ export async function runScan(opts: RunScanOptions): Promise<RunScanResult> {
     languageRisk: 0,
     newSinceLast: 0,
     updated: 0,
+    countryBreakdown: {},
   };
 
   // ----------------------------------------------------------------------
@@ -264,6 +294,9 @@ export async function runScan(opts: RunScanOptions): Promise<RunScanResult> {
     if (job.score >= 70) stats.highFit++;
     else if (job.score >= 50) stats.mediumFit++;
     else stats.lowFit++;
+
+    const cc = job.country || 'other';
+    stats.countryBreakdown[cc] = (stats.countryBreakdown[cc] ?? 0) + 1;
   }
 
   log.info('scoring complete', {
@@ -317,8 +350,8 @@ export async function runScan(opts: RunScanOptions): Promise<RunScanResult> {
   insertScanLog(logEntry);
 
   const topJobs = finalJobs
-    .sort((a, b) => b.score - a.score || (b.postedDate ?? '').localeCompare(a.postedDate ?? ''))
-    .slice(0, 10);
+    .filter((j) => j.score >= 70)
+    .sort((a, b) => b.score - a.score || (b.postedDate ?? '').localeCompare(a.postedDate ?? ''));
 
   log.info('scan complete', {
     totalDurationMs: durationMs,
@@ -328,24 +361,99 @@ export async function runScan(opts: RunScanOptions): Promise<RunScanResult> {
     highFit: stats.highFit,
   });
 
-  // Pretty terminal summary at the end
+  // ── Scan Summary ──────────────────────────────────────────────────────
+  const W = 62;
+  const hr = '─'.repeat(W);
   console.log();
-  console.log(kleur.bold().cyan('────────────────────────────────────────'));
-  console.log(kleur.bold('  Scan Summary'));
-  console.log(kleur.bold().cyan('────────────────────────────────────────'));
-  console.log(`  Date:        ${scanDate}`);
-  console.log(`  Duration:    ${(durationMs / 1000).toFixed(1)}s`);
-  console.log(`  Total jobs:  ${stats.scored}`);
-  console.log(
-    `  ${kleur.green('New:')} ${stats.newSinceLast}    ${kleur.dim('Updated:')} ${stats.updated}`,
-  );
-  console.log(
-    `  ${kleur.green('High-fit (≥70):')} ${stats.highFit}    ${kleur.yellow('Medium-fit (50-69):')} ${stats.mediumFit}`,
-  );
-  if (stats.languageRisk > 0) {
-    console.log(`  ${kleur.yellow('⚠ Language-risk flagged:')} ${stats.languageRisk}`);
+  console.log(kleur.bold().cyan(hr));
+  console.log(kleur.bold(`  Scan Summary — ${scanDate} · ${opts.mode} · ${(durationMs / 1000).toFixed(1)}s`));
+  console.log(kleur.bold().cyan(hr));
+  console.log();
+
+  // Headline numbers
+  const newStr    = kleur.green(`New: ${stats.newSinceLast}`);
+  const updStr    = kleur.dim(`Updated: ${stats.updated}`);
+  const highStr   = kleur.green(`High-fit (≥70): ${stats.highFit}`);
+  const midStr    = kleur.yellow(`Mid-fit (50-69): ${stats.mediumFit}`);
+  const langStr   = stats.languageRisk > 0 ? `  ${kleur.yellow(`⚠ lang-risk: ${stats.languageRisk}`)}` : '';
+  console.log(`  ${newStr}    ${updStr}    ${highStr}    ${midStr}${langStr}`);
+  console.log();
+
+  // ── Source breakdown ─────────────────────────────────────────────────
+  const catLabels: Record<string, string> = {
+    job_board: 'Job boards',
+    ats:       'ATS companies',
+    agency:    'Agencies',
+    watchlist: 'Watchlist',
+  };
+  const catOrder = ['job_board', 'ats', 'watchlist', 'agency'];
+  const byCategory: Record<string, Array<{ id: string; found: number; errors: number }>> = {};
+  for (const cat of catOrder) byCategory[cat] = [];
+  for (const [id, src] of Object.entries(perSource)) {
+    const cat = src.category ?? 'job_board';
+    (byCategory[cat] ??= []).push({ id, found: src.jobsFound, errors: src.errors.length });
   }
+
+  console.log(`  ${kleur.bold('By source')}`);
+  console.log(`  ${kleur.dim('─'.repeat(W - 2))}`);
+  let anySource = false;
+  for (const cat of catOrder) {
+    const entries = byCategory[cat];
+    if (!entries || entries.length === 0) continue;
+    anySource = true;
+    const label = (catLabels[cat] ?? cat).padEnd(14);
+    const parts = entries.map((e) => {
+      const errBadge = e.errors > 0 ? kleur.red(` (${e.errors} err)`) : '';
+      return `${kleur.cyan(e.id)}: ${e.found}${errBadge}`;
+    });
+    console.log(`  ${kleur.dim(label)} ${parts.join('   ')}`);
+  }
+  if (!anySource) console.log(kleur.dim('  (no sources ran)'));
   console.log();
+
+  // ── Country breakdown ────────────────────────────────────────────────
+  const countryOrder = ['DE', 'NL', 'CH', 'BE', 'remote', 'other'];
+  const cb = stats.countryBreakdown;
+  const allCountries = [
+    ...countryOrder.filter((c) => cb[c] != null),
+    ...Object.keys(cb).filter((c) => !countryOrder.includes(c)),
+  ];
+  if (allCountries.length > 0) {
+    console.log(`  ${kleur.bold('By country')}`);
+    console.log(`  ${kleur.dim('─'.repeat(W - 2))}`);
+    const countryParts = allCountries.map((c) => `${kleur.cyan(c)}: ${cb[c]}`);
+    console.log(`  ${countryParts.join('   ')}`);
+    console.log();
+  }
+
+  // ── High-fit jobs ────────────────────────────────────────────────────
+  if (topJobs.length > 0) {
+    const todayMs = new Date(scanDate + 'T00:00:00Z').getTime();
+    const daysSince = (iso: string | null | undefined): string => {
+      if (!iso) return '   ?';
+      const t = new Date(iso + 'T00:00:00Z').getTime();
+      const d = Math.max(0, Math.floor((todayMs - t) / (1000 * 60 * 60 * 24)));
+      return `${String(d).padStart(2)}d`;
+    };
+
+    console.log(`  ${kleur.bold(`High-fit jobs (≥70) — ${topJobs.length} found`)}`);
+    console.log(`  ${kleur.dim('─'.repeat(W - 2))}`);
+    for (const j of topJobs) {
+      const risk = j.languageRisk ? kleur.yellow(' ⚠') : '';
+      const titleTrunc = j.title.length > 38 ? j.title.substring(0, 35) + '…' : j.title.padEnd(38);
+      const companyTrunc = j.company.length > 22 ? j.company.substring(0, 19) + '…' : j.company.padEnd(22);
+      const posted = j.postedDate ? daysSince(j.postedDate) : '  ?';
+      const scanned = daysSince(j.firstSeen);
+      console.log(
+        `  ${kleur.cyan(String(j.score).padStart(3))}  ${kleur.bold(titleTrunc)}  ${companyTrunc} ${kleur.dim(`(${j.country})`)}${risk}`,
+      );
+      console.log(
+        `       ${kleur.dim(`posted ${posted} ago · scanned ${scanned} ago · status ${j.status}`)}`,
+      );
+      if (j.url) console.log(`       ${kleur.dim(j.url)}`);
+    }
+    console.log();
+  }
 
   return { scanDate, durationMs, stats, perSource, topJobs };
 }

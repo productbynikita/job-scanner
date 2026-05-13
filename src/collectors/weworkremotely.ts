@@ -41,6 +41,7 @@ export const weWorkRemotelyCollector: Collector = {
         ignoreAttributes: false,
         cdataPropName: '_cdata',
         textNodeName: '_text',
+        processEntities: false,
       });
 
       let parsed: unknown;

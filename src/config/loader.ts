@@ -7,7 +7,7 @@
 
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import type { Preferences, Roles, Agencies, Companies, CountrySources } from '../types/config.js';
+import type { Preferences, Roles, Agencies, Companies, CountrySources, Watchlist } from '../types/config.js';
 
 const INPUTS_DIR = resolve(process.cwd(), 'data/inputs');
 
@@ -89,6 +89,11 @@ export function loadCompanies(): Companies {
     }
   }
   return result;
+}
+
+export function loadWatchlist(): Watchlist {
+  const raw = loadJson<{ companies: unknown[]; _comment?: string }>('watchlist.json');
+  return { companies: (raw.companies ?? []) as Watchlist['companies'] };
 }
 
 export function loadCv(): string {

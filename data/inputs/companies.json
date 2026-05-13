@@ -7,16 +7,22 @@
     "workable": "Visit https://apply.workable.com/{slug}/ — slug is in the URL"
   },
   "greenhouse": [
-    { "slug": "mollie", "name": "Mollie", "country": "NL", "industry": "fintech" },
     { "slug": "adyen", "name": "Adyen", "country": "NL", "industry": "fintech" },
-    { "slug": "miro", "name": "Miro", "country": "NL", "industry": "saas" },
-    { "slug": "personio", "name": "Personio", "country": "DE", "industry": "hrtech" },
+    { "slug": "bearingpoint", "name": "BearingPoint", "country": "DE", "industry": "consulting" },
+    { "slug": "hubspot", "name": "HubSpot", "country": "remote", "industry": "saas" },
+    { "slug": "databricks", "name": "Databricks", "country": "remote", "industry": "data" },
+    { "slug": "cloudflare", "name": "Cloudflare", "country": "remote", "industry": "infra" },
+    { "slug": "mongodb", "name": "MongoDB", "country": "remote", "industry": "devtools" },
+    { "slug": "sumup", "name": "SumUp", "country": "DE", "industry": "fintech" },
+    { "slug": "raisin", "name": "Raisin", "country": "DE", "industry": "fintech" },
+    { "slug": "solarisbank", "name": "Solaris", "country": "DE", "industry": "fintech" },
+    { "slug": "idnow", "name": "IDnow", "country": "DE", "industry": "regtech" },
+    { "slug": "onrunning", "name": "On Running", "country": "CH", "industry": "consumer" },
     { "slug": "celonis", "name": "Celonis", "country": "DE", "industry": "enterprise-saas" },
     { "slug": "n26", "name": "N26", "country": "DE", "industry": "fintech" },
-    { "slug": "trade-republic", "name": "Trade Republic", "country": "DE", "industry": "fintech" },
+    { "slug": "traderepublic", "name": "Trade Republic", "country": "DE", "industry": "fintech" },
     { "slug": "delivery-hero", "name": "Delivery Hero", "country": "DE", "industry": "logistics" },
     { "slug": "hellofresh", "name": "HelloFresh", "country": "DE", "industry": "consumer" },
-    { "slug": "zalando", "name": "Zalando", "country": "DE", "industry": "ecommerce" },
     { "slug": "scout24", "name": "Scout24", "country": "DE", "industry": "marketplace" },
     { "slug": "datadog", "name": "Datadog", "country": "remote", "industry": "devtools" },
     { "slug": "elastic", "name": "Elastic", "country": "remote", "industry": "devtools" },
@@ -24,31 +30,27 @@
     { "slug": "stripe", "name": "Stripe", "country": "remote", "industry": "fintech" },
     { "slug": "klarna", "name": "Klarna", "country": "SE", "industry": "fintech" },
     { "slug": "spotify", "name": "Spotify", "country": "SE", "industry": "media" },
-    { "slug": "wise", "name": "Wise", "country": "remote", "industry": "fintech" }
+    { "slug": "wise", "name": "Wise", "country": "remote", "industry": "fintech" },
+    { "slug": "remote", "name": "Remote", "country": "remote", "industry": "hrtech" },
+    { "slug": "doctolib", "name": "Doctolib", "country": "FR", "industry": "healthtech" },
+    { "slug": "bird", "name": "Bird (ex-MessageBird)", "country": "NL", "industry": "saas" }
   ],
   "lever": [
-    { "slug": "messagebird", "name": "MessageBird", "country": "NL", "industry": "saas" },
-    { "slug": "bunq", "name": "bunq", "country": "NL", "industry": "fintech" },
-    { "slug": "remote", "name": "Remote", "country": "remote", "industry": "hrtech" },
-    { "slug": "deel", "name": "Deel", "country": "remote", "industry": "hrtech" },
-    { "slug": "doctolib", "name": "Doctolib", "country": "FR", "industry": "healthtech" },
-    { "slug": "back-market", "name": "Back Market", "country": "FR", "industry": "ecommerce" },
-    { "slug": "alan", "name": "Alan", "country": "FR", "industry": "healthtech" },
-    { "slug": "cybereason", "name": "Cybereason", "country": "remote", "industry": "security" }
+    { "slug": "kpmg", "name": "KPMG", "country": "DE", "industry": "consulting" },
+    { "slug": "sonarsource", "name": "Sonar", "country": "CH", "industry": "devtools" }
   ],
   "ashby": [
     { "slug": "linear", "name": "Linear", "country": "remote", "industry": "devtools" },
     { "slug": "ramp", "name": "Ramp", "country": "remote", "industry": "fintech" },
     { "slug": "vercel", "name": "Vercel", "country": "remote", "industry": "devtools" },
-    { "slug": "anthropic", "name": "Anthropic", "country": "remote", "industry": "ai" },
     { "slug": "openai", "name": "OpenAI", "country": "remote", "industry": "ai" },
     { "slug": "cohere", "name": "Cohere", "country": "remote", "industry": "ai" },
     { "slug": "supabase", "name": "Supabase", "country": "remote", "industry": "devtools" },
-    { "slug": "browserbase", "name": "Browserbase", "country": "remote", "industry": "devtools" }
+    { "slug": "browserbase", "name": "Browserbase", "country": "remote", "industry": "devtools" },
+    { "slug": "deel", "name": "Deel", "country": "remote", "industry": "hrtech" },
+    { "slug": "alan", "name": "Alan", "country": "FR", "industry": "healthtech" },
+    { "slug": "forto", "name": "Forto", "country": "DE", "industry": "logistics" },
+    { "slug": "deepl", "name": "DeepL", "country": "DE", "industry": "ai" }
   ],
-  "workable": [
-    { "slug": "blueground", "name": "Blueground", "country": "GR", "industry": "real-estate" },
-    { "slug": "workable", "name": "Workable", "country": "GR", "industry": "hrtech" },
-    { "slug": "skroutz", "name": "Skroutz", "country": "GR", "industry": "marketplace" }
-  ]
+  "workable": []
 }

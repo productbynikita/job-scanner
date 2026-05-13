@@ -25,11 +25,27 @@ export interface ScoreBreakdown {
   bonus: number;
 }
 
+/** Initial triage decision after reviewing a job. */
+export type Decision = 'applied' | 'passed' | 'shortlist' | 'watch';
+
+/** Application progress stage. Only relevant when decision='applied'. */
+export type Stage =
+  | 'applied'
+  | 'screening'
+  | 'interview'
+  | 'onsite'
+  | 'offer'
+  | 'rejected'
+  | 'declined'
+  | 'ghosted';
+
 /** Career-ops handoff namespace. Scanner creates empty, never modifies after. */
 export interface CareerOps {
-  decision?: 'applied' | 'passed' | 'shortlist' | 'watch';
+  decision?: Decision;
+  stage?: Stage;
+  decisionDate?: string;
   appliedDate?: string;
-  applicationStatus?: string;
+  stageUpdatedAt?: string;
   followUpDue?: string;
   notes?: string;
   contact?: {
@@ -138,4 +154,6 @@ export interface ScanStats {
   languageRisk: number;
   newSinceLast: number;
   updated: number;
+  /** Jobs found per country code (DE/NL/CH/BE/remote/other). */
+  countryBreakdown: Record<string, number>;
 }
