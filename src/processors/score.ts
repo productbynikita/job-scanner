@@ -201,6 +201,31 @@ function scoreBonus(text: string, roles: Roles): { points: number; reasons: stri
   return { points, reasons };
 }
 
+/**
+ * Penalty for off-target industries (biotech, defense, lab automation, etc.).
+ * Counts unique anti-pattern keyword hits and subtracts a tunable amount per hit,
+ * capped at max_total so a JD can't go below zero from this alone.
+ */
+function scoreAntiPatterns(text: string, roles: Roles): { points: number; reasons: string[] } {
+  const list = roles.domainStrengths.antiPatterns ?? [];
+  const rule = roles.scoringRules.antiPatternPenalty;
+  if (list.length === 0 || !rule) return { points: 0, reasons: [] };
+
+  const lower = (text || '').toLowerCase();
+  const hits = new Set<string>();
+  for (const kw of list) {
+    if (!kw || kw.startsWith('_')) continue;
+    if (lower.includes(kw.toLowerCase())) hits.add(kw);
+  }
+  if (hits.size === 0) return { points: 0, reasons: [] };
+
+  const penalty = Math.min(rule.maxTotal, hits.size * rule.perHit);
+  return {
+    points: -penalty,
+    reasons: [`off-target industry: ${[...hits].slice(0, 4).join(', ')}${hits.size > 4 ? '…' : ''} (-${penalty})`],
+  };
+}
+
 export function scoreJob(job: RawJob & { language?: string }, roles: Roles): ScoreResult {
   const title = job.title || '';
   const desc = job.descriptionSnippet || '';
@@ -217,10 +242,14 @@ export function scoreJob(job: RawJob & { language?: string }, roles: Roles): Sco
   const sen = scoreSeniority(title, roles);
   const rec = scoreRecency(postedDate, roles);
   const bonus = scoreBonus(fullText, roles);
+  const anti = scoreAntiPatterns(fullText, roles);
 
-  const total = Math.min(
-    role.points + domain.points + lang.points + loc.points + sen.points + rec.points + bonus.points,
-    100,
+  const total = Math.max(
+    0,
+    Math.min(
+      role.points + domain.points + lang.points + loc.points + sen.points + rec.points + bonus.points + anti.points,
+      100,
+    ),
   );
 
   return {
@@ -232,7 +261,7 @@ export function scoreJob(job: RawJob & { language?: string }, roles: Roles): Sco
       location: loc.points,
       seniority: sen.points,
       recency: rec.points,
-      bonus: bonus.points,
+      bonus: bonus.points + anti.points,
     },
     reasons: [
       role.reason,
@@ -242,6 +271,7 @@ export function scoreJob(job: RawJob & { language?: string }, roles: Roles): Sco
       sen.reason,
       rec.reason,
       ...bonus.reasons,
+      ...anti.reasons,
     ],
     languageRisk: lang.reason === 'language risk - perfect domain fit',
   };

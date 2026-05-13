@@ -74,6 +74,7 @@ export interface Roles {
     secondary: string[];
     tertiary: string[];
     generalTech: string[];
+    antiPatterns?: string[];
   };
   industries: {
     preferred: string[];
@@ -110,6 +111,10 @@ export interface Roles {
       d8to14: number;
       d15to30: number;
       over30Days: number;
+    };
+    antiPatternPenalty?: {
+      perHit: number;
+      maxTotal: number;
     };
     bonusSignals: {
       visaSponsorship: number;
