@@ -12,6 +12,7 @@ import { loadAllConfig } from './config/loader.js';
 import { dedupeAndMerge } from './processors/dedupe.js';
 import { detectLanguage, hasHardLanguageRequirement } from './processors/language.js';
 import { scoreJob } from './processors/score.js';
+import { inferRoleIndustry, inferCompanyIndustry, displayIndustry } from './processors/industry.js';
 import {
   upsertJob,
   insertScanLog,
@@ -431,49 +432,172 @@ export async function runScan(opts: RunScanOptions): Promise<RunScanResult> {
 
   // ── High-fit jobs ────────────────────────────────────────────────────
   if (topJobs.length > 0) {
-    const todayMs = new Date(scanDate + 'T00:00:00Z').getTime();
-    const daysSince = (iso: string | null | undefined): string => {
-      if (!iso) return '   ?';
-      const t = new Date(iso + 'T00:00:00Z').getTime();
-      const d = Math.max(0, Math.floor((todayMs - t) / (1000 * 60 * 60 * 24)));
-      return `${String(d).padStart(2)}d`;
-    };
-
-    console.log(`  ${kleur.bold(`High-fit jobs (≥70) — ${topJobs.length} found`)}`);
-    console.log(`  ${kleur.dim('─'.repeat(W - 2))}`);
-
-    // Group by country (DE → NL → CH → BE → remote → other), score-sorted within each group.
-    const countryGroupOrder = ['DE', 'NL', 'CH', 'BE', 'remote'];
-    const byCountry: Record<string, typeof topJobs> = {};
-    for (const j of topJobs) {
-      const key = j.country || 'other';
-      (byCountry[key] ??= []).push(j);
-    }
-    const orderedCountries = [
-      ...countryGroupOrder.filter((c) => byCountry[c]?.length),
-      ...Object.keys(byCountry).filter((c) => !countryGroupOrder.includes(c)),
-    ];
-
-    for (const country of orderedCountries) {
-      const group = byCountry[country]!.slice().sort((a, b) => b.score - a.score);
-      console.log(`  ${kleur.bold().magenta(country)} ${kleur.dim(`— ${group.length} jobs`)}`);
-      for (const j of group) {
-        const risk = j.languageRisk ? kleur.yellow(' ⚠') : '';
-        const titleTrunc = j.title.length > 38 ? j.title.substring(0, 35) + '…' : j.title.padEnd(38);
-        const companyTrunc = j.company.length > 22 ? j.company.substring(0, 19) + '…' : j.company.padEnd(22);
-        const posted = j.postedDate ? daysSince(j.postedDate) : '  ?';
-        const scanned = daysSince(j.firstSeen);
-        console.log(
-          `  ${kleur.cyan(String(j.score).padStart(3))}  ${kleur.bold(titleTrunc)}  ${companyTrunc} ${kleur.dim(`(${j.country})`)}${risk}`,
-        );
-        console.log(
-          `       ${kleur.dim(`posted ${posted} ago · scanned ${scanned} ago · status ${j.status}`)}`,
-        );
-        if (j.url) console.log(`       ${kleur.dim(j.url)}`);
-      }
-      console.log();
-    }
+    renderHighFitTable(topJobs, scanDate);
   }
 
   return { scanDate, durationMs, stats, perSource, topJobs };
+}
+
+// ─── High-fit table renderer ────────────────────────────────────────────
+//
+// Layout (header printed once at the top, then one section per country):
+//
+//   SCO  ROLE-IND     CO-IND       TITLE                            COMPANY            POSTED  SCAN  ST
+//   ────────────────────────────────────────────────────────────────────────────────────────────────────
+//   CH — 5 jobs
+//    93  Fintech      Fintech      Product Owner                    Noir                  1d    0d  new
+//   …
+//
+// Title is wrapped in an OSC8 hyperlink so the title doubles as the click target —
+// the bare URL line from the previous layout is dropped.
+
+const COUNTRY_GROUP_ORDER = ['CH', 'DE', 'NL', 'BE', 'remote'];
+
+const COUNTRY_COLORS: Record<string, (s: string) => string> = {
+  CH: (s) => kleur.magenta().bold(s),
+  DE: (s) => kleur.blue().bold(s),
+  NL: (s) => kleur.yellow().bold(s),
+  BE: (s) => kleur.cyan().bold(s),
+  remote: (s) => kleur.green().bold(s),
+};
+
+const COL = {
+  sco: 3,
+  role: 12,
+  co: 12,
+  title: 34,
+  company: 20,
+  posted: 6,
+  scan: 5,
+  st: 4,
+} as const;
+
+function osc8(text: string, url: string): string {
+  if (!url) return text;
+  return `\x1b]8;;${url}\x1b\\${text}\x1b]8;;\x1b\\`;
+}
+
+function pad(s: string, n: number): string {
+  if (s.length === n) return s;
+  if (s.length > n) return s.substring(0, n - 1) + '…';
+  return s + ' '.repeat(n - s.length);
+}
+
+function colorScore(score: number): string {
+  const s = String(score).padStart(COL.sco);
+  if (score >= 85) return kleur.green().bold(s);
+  if (score >= 70) return kleur.cyan(s);
+  return kleur.yellow(s);
+}
+
+function colorAge(days: number): string {
+  const s = `${days}d`.padStart(4);
+  if (days <= 2) return kleur.green(s);
+  if (days <= 7) return kleur.dim(s);
+  return kleur.red(s);
+}
+
+function colorStatus(status: string): string {
+  // Compact: new/live/stale/arch
+  const short = status === 'active' ? 'live' : status === 'not_in_latest_scan' ? 'stale' : status === 'archived' ? 'arch' : status;
+  const padded = short.padEnd(COL.st);
+  if (short === 'new') return kleur.green(padded);
+  if (short === 'live') return kleur.cyan(padded);
+  if (short === 'stale') return kleur.yellow(padded);
+  return kleur.dim(padded);
+}
+
+function renderHighFitTable(topJobs: Job[], scanDate: string): void {
+  const todayMs = new Date(scanDate + 'T00:00:00Z').getTime();
+  const daysSince = (iso: string | null | undefined): number | null => {
+    if (!iso) return null;
+    const t = new Date(iso + 'T00:00:00Z').getTime();
+    return Math.max(0, Math.floor((todayMs - t) / (1000 * 60 * 60 * 24)));
+  };
+  const ageCell = (iso: string | null | undefined, width: number): string => {
+    const d = daysSince(iso);
+    if (d === null) return kleur.dim('?'.padStart(width));
+    return colorAge(d).padStart(width);
+  };
+
+  const tableWidth =
+    2 + COL.sco + 2 + COL.role + 2 + COL.co + 2 + COL.title + 2 + COL.company + 2 + COL.posted + 2 + COL.scan + 2 + COL.st;
+
+  console.log(`  ${kleur.bold(`High-fit jobs (≥70) — ${topJobs.length} found`)}`);
+  console.log(`  ${kleur.dim('─'.repeat(tableWidth - 2))}`);
+
+  // Column header — printed once at the top
+  const header =
+    '  ' +
+    kleur.dim('SCO'.padStart(COL.sco)) +
+    '  ' +
+    kleur.dim('ROLE-IND'.padEnd(COL.role)) +
+    '  ' +
+    kleur.dim('CO-IND'.padEnd(COL.co)) +
+    '  ' +
+    kleur.dim('TITLE'.padEnd(COL.title)) +
+    '  ' +
+    kleur.dim('COMPANY'.padEnd(COL.company)) +
+    '  ' +
+    kleur.dim('POSTED'.padStart(COL.posted)) +
+    '  ' +
+    kleur.dim('SCAN'.padStart(COL.scan)) +
+    '  ' +
+    kleur.dim('ST'.padEnd(COL.st));
+  console.log(header);
+  console.log(`  ${kleur.dim('─'.repeat(tableWidth - 2))}`);
+
+  // Group by country, score-sorted within each
+  const byCountry: Record<string, Job[]> = {};
+  for (const j of topJobs) {
+    const key = j.country || 'other';
+    (byCountry[key] ??= []).push(j);
+  }
+  const orderedCountries = [
+    ...COUNTRY_GROUP_ORDER.filter((c) => byCountry[c]?.length),
+    ...Object.keys(byCountry).filter((c) => !COUNTRY_GROUP_ORDER.includes(c)),
+  ];
+
+  for (const country of orderedCountries) {
+    const group = byCountry[country]!.slice().sort((a, b) => b.score - a.score);
+    const colorFn = COUNTRY_COLORS[country] ?? ((s: string) => kleur.bold(s));
+    console.log();
+    console.log(`  ${colorFn(country)} ${kleur.dim(`— ${group.length} jobs`)}`);
+    for (const j of group) {
+      const risk = j.languageRisk ? kleur.yellow(' ⚠') : '';
+      const roleTag = displayIndustry(inferRoleIndustry(j));
+      const companyTag = displayIndustry(inferCompanyIndustry(j));
+      // Title is bold and OSC8-linked so a click opens the posting in modern terminals
+      const titleVisible = pad(j.title, COL.title);
+      const titleCell = j.url ? osc8(kleur.bold(titleVisible), j.url) : kleur.bold(titleVisible);
+      const companyCell = pad(j.company, COL.company);
+
+      console.log(
+        '  ' +
+          colorScore(j.score) +
+          '  ' +
+          kleur.cyan().dim(pad(roleTag, COL.role)) +
+          '  ' +
+          kleur.magenta().dim(pad(companyTag, COL.co)) +
+          '  ' +
+          titleCell +
+          risk +
+          '  ' +
+          companyCell +
+          '  ' +
+          ageCell(j.postedDate, COL.posted) +
+          '  ' +
+          ageCell(j.firstSeen, COL.scan) +
+          '  ' +
+          colorStatus(j.status),
+      );
+      // URL on its own dim line — every terminal can cmd-click a bare URL,
+      // even ones that don't render OSC8 hyperlinks on the title above.
+      if (j.url) {
+        const urlIndent = 2 + COL.sco + 2 + COL.role + 2 + COL.co + 2; // align under TITLE column
+        console.log(' '.repeat(urlIndent) + kleur.dim(j.url));
+      }
+    }
+  }
+  console.log();
 }
