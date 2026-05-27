@@ -123,7 +123,10 @@ export async function runScan(opts: RunScanOptions): Promise<RunScanResult> {
   const results = await Promise.all(
     collectors.map(async (c) => {
       log.debug('starting collector', { source: c.id });
-      const result = await c.collect({ maxResults: maxResultsPerSource });
+      const result = await c.collect({
+        maxResults: maxResultsPerSource,
+        countries: opts.countryFilter ? [opts.countryFilter.toUpperCase()] : undefined,
+      });
       log.info('collector finished', {
         source: c.id,
         jobsFound: result.jobsFound,
@@ -438,21 +441,38 @@ export async function runScan(opts: RunScanOptions): Promise<RunScanResult> {
 
     console.log(`  ${kleur.bold(`High-fit jobs (≥70) — ${topJobs.length} found`)}`);
     console.log(`  ${kleur.dim('─'.repeat(W - 2))}`);
+
+    // Group by country (DE → NL → CH → BE → remote → other), score-sorted within each group.
+    const countryGroupOrder = ['DE', 'NL', 'CH', 'BE', 'remote'];
+    const byCountry: Record<string, typeof topJobs> = {};
     for (const j of topJobs) {
-      const risk = j.languageRisk ? kleur.yellow(' ⚠') : '';
-      const titleTrunc = j.title.length > 38 ? j.title.substring(0, 35) + '…' : j.title.padEnd(38);
-      const companyTrunc = j.company.length > 22 ? j.company.substring(0, 19) + '…' : j.company.padEnd(22);
-      const posted = j.postedDate ? daysSince(j.postedDate) : '  ?';
-      const scanned = daysSince(j.firstSeen);
-      console.log(
-        `  ${kleur.cyan(String(j.score).padStart(3))}  ${kleur.bold(titleTrunc)}  ${companyTrunc} ${kleur.dim(`(${j.country})`)}${risk}`,
-      );
-      console.log(
-        `       ${kleur.dim(`posted ${posted} ago · scanned ${scanned} ago · status ${j.status}`)}`,
-      );
-      if (j.url) console.log(`       ${kleur.dim(j.url)}`);
+      const key = j.country || 'other';
+      (byCountry[key] ??= []).push(j);
     }
-    console.log();
+    const orderedCountries = [
+      ...countryGroupOrder.filter((c) => byCountry[c]?.length),
+      ...Object.keys(byCountry).filter((c) => !countryGroupOrder.includes(c)),
+    ];
+
+    for (const country of orderedCountries) {
+      const group = byCountry[country]!.slice().sort((a, b) => b.score - a.score);
+      console.log(`  ${kleur.bold().magenta(country)} ${kleur.dim(`— ${group.length} jobs`)}`);
+      for (const j of group) {
+        const risk = j.languageRisk ? kleur.yellow(' ⚠') : '';
+        const titleTrunc = j.title.length > 38 ? j.title.substring(0, 35) + '…' : j.title.padEnd(38);
+        const companyTrunc = j.company.length > 22 ? j.company.substring(0, 19) + '…' : j.company.padEnd(22);
+        const posted = j.postedDate ? daysSince(j.postedDate) : '  ?';
+        const scanned = daysSince(j.firstSeen);
+        console.log(
+          `  ${kleur.cyan(String(j.score).padStart(3))}  ${kleur.bold(titleTrunc)}  ${companyTrunc} ${kleur.dim(`(${j.country})`)}${risk}`,
+        );
+        console.log(
+          `       ${kleur.dim(`posted ${posted} ago · scanned ${scanned} ago · status ${j.status}`)}`,
+        );
+        if (j.url) console.log(`       ${kleur.dim(j.url)}`);
+      }
+      console.log();
+    }
   }
 
   return { scanDate, durationMs, stats, perSource, topJobs };

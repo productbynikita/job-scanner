@@ -10,7 +10,11 @@
 | `npm run scan:ats` | ATS portals only (Greenhouse, Ashby, Lever, Workable) |
 | `npm run scan:country` | Country-specific boards |
 | `npm run scan:remote` | Remote-only sources |
-| `npm run scan:linkedin` | LinkedIn only (costs Apify credits) |
+| `npm run scan:linkedin` | LinkedIn — all 4 countries (DE/NL/CH/BE), 8 Apify calls |
+| `npm run scan:linkedin:de` | LinkedIn Germany only — 2 Apify calls |
+| `npm run scan:linkedin:nl` | LinkedIn Netherlands only — 2 Apify calls |
+| `npm run scan:linkedin:ch` | LinkedIn Switzerland only — 2 Apify calls |
+| `npm run scan:linkedin:be` | LinkedIn Belgium only — 2 Apify calls |
 | `npm run scan:agencies` | Recruiting agencies only |
 | `npm run scan:watchlist` | Watchlist companies only |
 | `npm run scan:debug` | Full scan with debug logging |

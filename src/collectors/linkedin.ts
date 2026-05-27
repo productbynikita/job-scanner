@@ -142,10 +142,17 @@ export const linkedinCollector: Collector = {
         };
       }
 
+      // If the scanner passed --country, restrict to that country's location.
+      const countryFilter = opts.countries?.map((c) => c.toUpperCase());
+      const locations = countryFilter
+        ? LOCATIONS.filter((l) => countryFilter.includes(l.code))
+        : LOCATIONS;
+
       log.info('starting collector', {
         actor: ACTOR,
         queries: QUERIES.length,
-        locations: LOCATIONS.length,
+        locations: locations.length,
+        countryFilter: countryFilter?.join(',') ?? 'all',
       });
 
       const allJobs: RawJob[] = [];
@@ -155,7 +162,7 @@ export const linkedinCollector: Collector = {
       let totalDropped = 0;
       const seenUrls = new Set<string>();
 
-      for (const loc of LOCATIONS) {
+      for (const loc of locations) {
         for (const query of QUERIES) {
           const qLog = log.child(`${loc.code}/${query.replace(/\s+/g, '-').substring(0, 20)}`);
           qLog.info('searching', { query, location: loc.code });
@@ -167,7 +174,7 @@ export const linkedinCollector: Collector = {
                 // Correct input schema for worldunboxer/rapid-linkedin-scraper
                 job_title: query,
                 location: loc.code,
-                jobs_entries: 50,
+                jobs_entries: 200, // raised from 50 — LinkedIn typically returns ~95-100 IDs per query
                 job_post_time: 'r604800', // past week
                 start_jobs: 0,
               },
@@ -175,7 +182,7 @@ export const linkedinCollector: Collector = {
               costPerItemUsd: 0,
               fixedCostUsd: 0,
               enforceBudget: false,
-              expectedItems: 50,
+              expectedItems: 200,
               timeoutSecs: 180,
             });
 
@@ -225,21 +232,13 @@ export const linkedinCollector: Collector = {
                 isAgency: false,
               });
               totalKept++;
-
-              if (opts.maxResults && allJobs.length >= opts.maxResults) {
-                log.warn('hit max results, stopping', { max: opts.maxResults });
-                break;
-              }
             }
           } catch (err) {
             const msg = err instanceof Error ? err.message : String(err);
             errors.push(`${loc.country || 'EU'}/${query}: ${msg}`);
             qLog.error('actor call failed', { error: msg });
           }
-
-          if (opts.maxResults && allJobs.length >= opts.maxResults) break;
         }
-        if (opts.maxResults && allJobs.length >= opts.maxResults) break;
       }
 
       log.info('collector complete', {
